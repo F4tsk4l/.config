@@ -1,2 +1,1 @@
-#MY CONFIGS
-My Rice
+My configs
