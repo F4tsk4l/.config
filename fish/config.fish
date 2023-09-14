@@ -35,4 +35,3 @@ export VISUAL=vim
 export EDITOR="$VISUAL"
 
 #if [-z "$TMUX"]; then tmux; fi
-
