@@ -1,4 +1,4 @@
--- IMPORT
+--IMPORT
 import XMonad
 import XMonad.Config.Desktop
 import System.Directory
@@ -8,6 +8,8 @@ import qualified XMonad.StackSet as W
 
 -- Util
 import Graphics.X11.ExtraTypes.XF86
+import XMonad.Util.Hacks (windowedFullscreenFixEventHook, javaHack, trayerAboveXmobarEventHook, trayAbovePanelEventHook, trayerPaddingXmobarEventHook, trayPaddingXmobarEventHook, trayPaddingEventHook)
+import XMonad.Util.Dmenu
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.SpawnOnce
@@ -40,7 +42,6 @@ import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
 import XMonad.Layout.Magnifier
 import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR))
-import XMonad.Layout.NoBorders
 import XMonad.Layout.Renamed
 import XMonad.Layout.ShowWName
 import XMonad.Layout.Simplest
@@ -50,9 +51,6 @@ import XMonad.Layout.WindowArranger (windowArrange, WindowArrangerMsg(..))
 import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts)
 import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 import XMonad.Layout.NoFrillsDecoration
-
--- Prompt
-import XMonad.Prompt
 
 -- Data
 import Data.List
@@ -65,12 +63,16 @@ import qualified Data.Map as M
 
 -- Hooks
 import XMonad.Hooks.SetWMName
+import XMonad.Hooks.EwmhDesktops 
 import XMonad.Hooks.Place
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog 
 import XMonad.Hooks.StatusBar
+import XMonad.Hooks.StatusBar.PP
+import XMonad.Hooks.WindowSwallowing
+import XMonad.Hooks.WorkspaceHistory
 import XMonad.Hooks.ManageHelpers(doFullFloat, doCenterFloat, isFullscreen, isDialog)
-
+import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
 ----------------------------------------------------------
 -- MyTerminal
 myTerminal :: String
@@ -158,22 +160,29 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
-
     -- MY KEYBINDINGS
-    , ((modm .|. shiftMask, xK_v), spawn "viper restart && viper-gui -t")
+    -- StartViper 
+    , ((modm .|. shiftMask, xK_v), spawn "viper start; viper-gui -t")
+    -- StopViper 
+    , ((modm .|. mod1Mask, xK_v), spawn "viper stop; killall viper-gui")
     -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
-    -- ((modm, xK_f), toggleFull)
     , ((modm, xK_n), spawn "nemo")
     , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
-    -- Browsers
     -- Fullscreen Toggle
     , ((modm, xK_f), toggleFull)
+    -- Browsers
     , ((modm .|. shiftMask, xK_f), spawnHere "firefox")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
-    , ((modm .|. shiftMask, xK_l), spawnHere "librewolf")
+    , ((modm .|. controlMask, xK_l), spawnHere "librewolf")
     -- Screenshot
-    , ((0, xK_Print), spawn "scrot -z")
-    , ((0 .|. shiftMask, xK_Print), spawn "scrot -z -s -l style=solid,width=1,color='red'")
+    -- Flameshot 
+    -- ((0 .|. mod1Mask, xK_Print), spawn "flameshot full -p $HOME/Pictures/Flameshts/Full/")
+    -- ((0 .|. shiftMask, xK_Print), spawn "flameshot gui -p $HOME/Pictures/Flameshts/Selection/")
+    , ((0 .|. mod1Mask, xK_Print), spawn "flameshot gui")
+    -- Maim 
+    , ((0, xK_Print), spawn "maim $HOME/Pictures/Maimshts/Full/$(date +%s).png")
+    , ((0 .|. shiftMask, xK_Print), spawn "maim --select $HOME/Pictures/Maimshts/Selection/$(date +%s).png")
+    , ((0 .|. controlMask, xK_Print), spawn "maim -i $(xdotool getactivewindow) -B $HOME/Pictures/Maimshts/ActiveW/$(date +%s).png")
     -- Morc menu
     , ((modm, xK_z), spawn "morc_menu")
     -- ScratchPads
@@ -218,12 +227,13 @@ toggleFull = withFocused (\windowId -> do
 {       
    floats <- gets (W.floating.windowset);        
    if windowId `M.member` floats        
-   then do 	   
-       withFocused $ toggleBorder           
+   then do  
+       withFocused $ toggleBorder
        withFocused $ windows.W.sink        
-   else do 	   
+   else do 
        withFocused $ toggleBorder           
        withFocused $  windows . (flip W.float $ W.RationalRect 0 0 1 1)})
+
 -- My spacing; n sets the gap size around the windows.
 ------------------------------------------------------
 tall     = renamed [Replace "tall"]
@@ -251,19 +261,25 @@ myTabTheme = def { fontName            = myFont
                  , inactiveTextColor   = "#dfdfdf" 
                  }
 
+--myShowWNameTheme :: SWNConfig
+--myShowWNameTheme = def
+--  { swn_font              = "xft:Ubuntu:bold:size=60"
+--  , swn_fade              = 0.5
+--  , swn_bgcolor           = "#1c1f24"
+--  , swn_color             = "#ffffff"
+--  }
+ 
 -- Layouts:
-myLayout = avoidStruts $ mouseResize $ windowArrange
+myLayoutHook = avoidStruts $ mouseResize $ windowArrange
                $ mkToggle (NBFULL ?? EOT) myDefaultLayout
              where
                myDefaultLayout = withBorder myBorderWidth tall
                                  ||| withBorder myBorderWidth monocle 
-                                 ||| tabs
+                                 ||| noBorders tabs
 
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
 mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
-
-myEventHook = fullscreenEventHook
 
 -- WS Window Count
 windowCount :: X (Maybe String)
@@ -275,7 +291,7 @@ myStartupHook = do
    spawnOnce "nitrogen --restore &"
    spawnOnce "picom &"
    spawnOnce "xfce4-notifyd &"
-   spawnOnce "trayer --edge top --distance 0 --align right --width 3 --SetDockType true --SetPartialStrut true --expand false --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17 &"
+   spawnOnce "trayer --edge top --distance 0 --align right --width 5 --iconspacing 0 --SetDockType true --padding 2 --expand false --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17 &"
    spawnOnce "xfce4-power-manager &"
    spawnOnce "pa-applet &"
    spawnOnce "start_conky_maia &"
@@ -288,12 +304,12 @@ myManageHook = composeAll
    , resource  =? "desktop_window"              --> doIgnore
    , className =? "trayer"                      --> doIgnore
    , title     =? "* Properties"                  --> doCenterFloat
-   , className =? "libreoffice-base" <&&> resource =? "libreoffice" --> doShift "5"
+   -- className =? "libreoffice-base" <&&> resource =? "libreoffice" --> doShift "5"
    , resource  =? "libreoffice-writer"          --> (doFullFloat <+> doShift "5")
    , className =? "conky"                       --> doIgnore
    , title     =? "Library"                     --> doCenterFloat
    , className =? "Nitrogen"                    --> doCenterFloat
-   , className =? "Browser"                    --> doCenterFloat
+   , className =? "Browser"                     --> doCenterFloat
    , className =? "qbittorrent"                 --> doCenterFloat
    , className =? "Pavucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
@@ -301,49 +317,49 @@ myManageHook = composeAll
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
    , className =? "viper-gui"                   --> doCenterFloat
+   , className =? "Soffice"                   --> doCenterFloat
    , className =? "Gimp-2.10"                   --> (doFullFloat <+> doShift "5")
-   , className =? "libreoffice-startcenter"     --> (doFullFloat <+> doShift "5")
+   , className =? "VirtualBox Machine"          --> doShift "4"
+   , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
+   , className =? "VirtualBox Manager"          --> doShift ( myWorkspaces !! 3 ) 
+   , className =? "obsidian"                    --> doShift ( myWorkspaces !! 2)
+   , className =? "libreoffice-startcenter"     --> (doFullFloat <+> doShift "4") 
    , className =? "xfreerdp"                    -->  doShift "3"
    , (isFullscreen                              --> doFullFloat)
-   ] <+> manageSpawn
+   ]
 
---Defaults
-defaults = def {
-      -- simple stuff
-        terminal           = myTerminal,
-        focusFollowsMouse  = myFocusFollowsMouse,
-        clickJustFocuses   = myClickJustFocuses,
-        modMask            = myModMask,
-        workspaces         = myWorkspaces,
-        borderWidth        = myBorderWidth,
-        normalBorderColor  = myNormColor,
-        focusedBorderColor = myFocusedColor,
-      -- key bindings
-        keys               = myKeys,
-        mouseBindings      = myMouseBindings,
-      -- hooks, layouts
-        layoutHook         = myLayout,
-        manageHook         = myManageHook,
-        handleEventHook    = myEventHook,
-        --logHook            = myLogHook,
-        startupHook        = myStartupHook
-    }
-
+main :: IO ()
 main = do
   xmproc <- spawnPipe "/usr/bin/xmobar"
-  xmonad $ docks $ fullscreenSupportBorder defaults{
-      logHook = dynamicLogWithPP xmobarPP  -- Status bars and Logging
-            { ppOutput = hPutStrLn xmproc
-            , ppCurrent = xmobarColor "white" "" . wrap "[""]" . clickable          -- Current workspace in xmobar
-               -- ppCurrent = xmobarColor "#98be65" "" . wrap "[" "]"               -- Current workspace in xmobar
-            , ppVisible = xmobarColor "#82AAFF" "" . clickable                      -- Visible but not current workspace
-            , ppHidden = xmobarColor "#ababab" "" . wrap " " "" . clickable          -- Hidden workspaces in xmobar; !!! Needed for clickability !!!
-               --  ppHiddenNoWindows = xmobarColor "#ababab" "" . clickable         -- Hidden workspaces (no windows)
-               -- ppTitle = xmobarColor "#b3afc2" "" . shorten 60                   -- Title of active window in xmobar
-            , ppSep =  "<fc=#666666> <fn=1> ||</fn> </fc>"                          -- Separators in xmobar
-            , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!" . clickable                   -- Urgent workspace
-            , ppExtras  = [windowCount]                                             -- # of windows current workspace
-               -- ppOrder = \(ws:l:t:_) -> [ws]
-            , ppOrder = \(ws:l:t:ex) -> [ws]++ex
-            }
+  xmonad $ docks $ fullscreenSupportBorder def {
+            -- simple stuff
+     terminal           = myTerminal,
+     focusFollowsMouse  = myFocusFollowsMouse,
+     clickJustFocuses   = myClickJustFocuses,
+     modMask            = myModMask,
+     workspaces         = myWorkspaces,
+     borderWidth        = myBorderWidth,
+     normalBorderColor  = myNormColor,
+     focusedBorderColor = myFocusedColor,
+    -- key bindings
+     keys               = myKeys,
+     mouseBindings      = myMouseBindings,
+    -- hooks, layouts
+     layoutHook         = myLayoutHook,
+     handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook, 
+     manageHook         = myManageHook <+> manageDocks <+> manageSpawn,
+     startupHook        = myStartupHook,
+     logHook = dynamicLogWithPP xmobarPP                                        -- Status bars and Logging
+       { ppOutput = hPutStrLn xmproc
+       , ppCurrent = xmobarColor "white" "" . wrap "[""]" . clickable           -- Current workspace in xmobar
+       , ppVisible = xmobarColor "#82AAFF" "" . clickable                       -- Visible but not current workspace
+       , ppHidden = xmobarColor "#ababab" "" . wrap " " "" . clickable          -- Hidden workspaces in xmobar; !!! Needed for clickability !!!
+       -- ppHiddenNoWindows = xmobarColor "#ababab" "" . clickable              -- Hidden workspaces (no windows)
+       -- ppTitle = xmobarColor "#b3afc2" "" . shorten 60                       -- Title of active window in xmobar
+       , ppSep =  "<fc=#82AAFF> <fn=1> ||</fn> </fc>"                           -- Separators in xmobar
+       , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!" . clickable         -- Urgent workspace
+       , ppExtras  = [windowCount]                                              --  of windows current workspace
+       -- ppOrder = \(ws:l:t:_) -> [ws]
+       , ppOrder = \(ws:l:t:ex) -> [ws]++ex
+       }
 }
