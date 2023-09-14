@@ -11,18 +11,19 @@ Config {
      , borderColor = "black"
      , border = TopB
      , bgColor = "black"
+     , iconRoot     = ".xmonad/xpm/"  -- default: "."
      , fgColor = "#F8F8F8"
      , alpha = 140
      -- position = TopP 0 40
-     , position = TopW L 97
-     -- position = Static {xpos = 0, ypos = 0, width = 1300, height = 20 }
+     -- position = TopW L 95
+     , position = Static {xpos = 0, ypos = 0, width = 1298, height = 17}
      , allDesktops = True
      , overrideRedirect = True
 
    -- Layout
      , sepChar =  "%"   -- delineator between plugin names and straight text
      , alignSep = "}{"  -- separator between left-right alignment
-     , template = "%UnsafeStdinReader% }{ %date% |  %disku%  |  %multicpu%  |  %coretemp%  |  %swap%  |  %memory%  |  %dynnetwork%  | %battery%"
+     , template = "%UnsafeStdinReader% }{ %date% |  %disku%  |  %multicpu%  |  %coretemp%  |  %swap%  |  %memory%  |  %dynnetwork%  | %battery%"  
 
    -- general behavior
      , lowerOnStart = True    -- send to bottom of window stack on start
@@ -123,5 +124,8 @@ Config {
 
         --Run StdinReader
         , Run UnsafeStdinReader
+           -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
+--        , Run Com "/home/cr33p3r/.config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 5 
+
        ]
 }
