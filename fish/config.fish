@@ -1,16 +1,16 @@
-#if status is-interactive
-#and not set -q TMUX
-#    exec tmux
-#end
+if status is-interactive
+and not set -q TMUX
+    exec tmux 
+end
 function st_docker
 sudo systemctl start docker.socket && sudo systemctl start docker
 end
 function sp_docker
 sudo systemctl stop docker.socket && sudo systemctl stop docker
 end
-alias ls "exa --icons"
-alias ll "exa -al --icons"
-alias l  "exa -a --icons"
+alias ls "eza --icons"
+alias ll "eza -al --icons"
+alias l  "eza -a --icons"
 alias vim "nvim"
 
 function cls
