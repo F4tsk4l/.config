@@ -31,6 +31,7 @@ import XMonad.Layout.ThreeColumns
 
 -- Layouts modifiers
 import XMonad.Layout.Gaps
+import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
 import XMonad.Actions.NoBorders
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.PerWorkspace
@@ -41,7 +42,6 @@ import XMonad.Layout.LayoutModifier
 import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
 import XMonad.Layout.Magnifier
 import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
-import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR))
 import XMonad.Layout.Renamed
 import XMonad.Layout.ShowWName
 import XMonad.Layout.Simplest
@@ -169,7 +169,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_n), spawn "nemo")
     , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
     -- Fullscreen Toggle
-    , ((modm, xK_f), toggleFull)
+    , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Browsers
     , ((modm .|. shiftMask, xK_f), spawnHere "firefox")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
@@ -180,9 +180,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- ((0 .|. shiftMask, xK_Print), spawn "flameshot gui -p $HOME/Pictures/Flameshts/Selection/")
     , ((0 .|. mod1Mask, xK_Print), spawn "flameshot gui")
     -- Maim 
-    , ((0, xK_Print), spawn "maim $HOME/Pictures/Maimshts/Full/$(date +%s).png")
-    , ((0 .|. shiftMask, xK_Print), spawn "maim --select $HOME/Pictures/Maimshts/Selection/$(date +%s).png")
-    , ((0 .|. controlMask, xK_Print), spawn "maim -i $(xdotool getactivewindow) -B $HOME/Pictures/Maimshts/ActiveW/$(date +%s).png")
+    , ((0, xK_Print), spawn "maim /home/cr33p3r/Pictures/Maimshts/Full/$(date +%s).png")
+    , ((0 .|. shiftMask, xK_Print), spawn "maim --select /home/cr33p3r/Pictures/Maimshts/Selection/$(date +%s).png")
+    , ((0 .|. controlMask, xK_Print), spawn "maim -i $(xdotool getactivewindow) -B /home/cr33p3r/Pictures/Maimshts/ActiveW/$(date +%s).png")
     -- Morc menu
     , ((modm, xK_z), spawn "morc_menu")
     -- ScratchPads
@@ -216,23 +216,16 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     ]
 
 -- Fullscreen Toggle
---Looks to see if focused window is floating and if it is the places it in the stack
---else it makes it floating but as full screen
---toggleFull = withFocused (\windowId -> do
---    { floats <- gets (W.floating . windowset);
---        if windowId `M.member` floats
---        then withFocused $ windows . W.sink
---        else withFocused $ windows . (flip W.float $ W.RationalRect 0 0 1 1) }) 
-toggleFull = withFocused (\windowId -> do    
-{       
-   floats <- gets (W.floating.windowset);        
-   if windowId `M.member` floats        
-   then do  
-       withFocused $ toggleBorder
-       withFocused $ windows.W.sink        
-   else do 
-       withFocused $ toggleBorder           
-       withFocused $  windows . (flip W.float $ W.RationalRect 0 0 1 1)})
+--toggleFull = withFocused (\windowId -> do    
+--{       
+--   floats <- gets (W.floating.windowset);        
+--   if windowId `M.member` floats        
+--   then do  
+--       withFocused $ toggleBorder 
+--       withFocused $ windows.W.sink        
+--   else do 
+--       withFocused $ toggleBorder           
+--       withFocused $  windows . (flip W.float $ W.RationalRect 0 0 1 1)})
 
 -- My spacing; n sets the gap size around the windows.
 ------------------------------------------------------
@@ -270,8 +263,7 @@ myTabTheme = def { fontName            = myFont
 --  }
  
 -- Layouts:
-myLayoutHook = avoidStruts $ mouseResize $ windowArrange
-               $ mkToggle (NBFULL ?? EOT) myDefaultLayout
+myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
                myDefaultLayout = withBorder myBorderWidth tall
                                  ||| withBorder myBorderWidth monocle 
@@ -307,6 +299,7 @@ myManageHook = composeAll
    -- className =? "libreoffice-base" <&&> resource =? "libreoffice" --> doShift "5"
    , resource  =? "libreoffice-writer"          --> (doFullFloat <+> doShift "5")
    , className =? "conky"                       --> doIgnore
+   , className =? "Xfce4-notifyd"                       --> doIgnore
    , title     =? "Library"                     --> doCenterFloat
    , className =? "Nitrogen"                    --> doCenterFloat
    , className =? "Browser"                     --> doCenterFloat
@@ -317,7 +310,7 @@ myManageHook = composeAll
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
    , className =? "viper-gui"                   --> doCenterFloat
-   , className =? "Soffice"                   --> doCenterFloat
+   , className =? "Soffice"                     --> doCenterFloat
    , className =? "Gimp-2.10"                   --> (doFullFloat <+> doShift "5")
    , className =? "VirtualBox Machine"          --> doShift "4"
    , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
@@ -331,7 +324,7 @@ myManageHook = composeAll
 main :: IO ()
 main = do
   xmproc <- spawnPipe "/usr/bin/xmobar"
-  xmonad $ docks $ fullscreenSupportBorder def {
+  xmonad $ docks $ fullscreenSupportBorder $ ewmh $ def {
             -- simple stuff
      terminal           = myTerminal,
      focusFollowsMouse  = myFocusFollowsMouse,
@@ -347,7 +340,7 @@ main = do
     -- hooks, layouts
      layoutHook         = myLayoutHook,
      handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook, 
-     manageHook         = myManageHook <+> manageDocks <+> manageSpawn,
+     manageHook         = myManageHook <+> manageDocks <+> manageSpawn, 
      startupHook        = myStartupHook,
      logHook = dynamicLogWithPP xmobarPP                                        -- Status bars and Logging
        { ppOutput = hPutStrLn xmproc
