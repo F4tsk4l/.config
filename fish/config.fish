@@ -26,8 +26,8 @@ function yayi
 yay -S --cleanafter
 end
 
-set -g PATH "$HOME/emmcdl:$PATH"
-set -g PATH "$HOME/.local/bin:$PATH"
+#set -g PATH "$HOME/emmcdl:$PATH"
+#set -g PATH "$HOME/.local/bin:$PATH"
 set -g PATH "$HOME/Downloads/Compressed/jcryptool:$PATH"
 #set -g dlp "/run/media/Cr33p3r/Local Disk/"
 set fish_greeting ""
