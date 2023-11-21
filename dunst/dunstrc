@@ -24,10 +24,10 @@
     # dynamic width from 0 to 300
     # width = (0, 300)
     # constant width of 300
-    width = 100 
+    width = 150
 
     # The maximum height of a single notification, excluding the frame.
-    height = 100 
+    height = 150
 
     # Position the notification in the top right corner
     origin = top-right
@@ -39,7 +39,7 @@
     scale = 0
 
     # Maximum number of notification (0 means no limit)
-    notification_limit = 20
+    notification_limit = 5
 
     ### Progress bar ###
 
@@ -61,10 +61,10 @@
     progress_bar_max_width = 100
 
     # Corner radius for the progress bar. 0 disables rounded corners.
-    progress_bar_corner_radius = 0
+    progress_bar_corner_radius = 10
 
     # Corner radius for the icon image.
-    icon_corner_radius = 0
+    icon_corner_radius = 5
 
     # Show how many messages are currently hidden (because of
     # notification_limit).
@@ -73,7 +73,7 @@
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing window manager is
     # present (e.g. xcompmgr, compiz, etc.). (X11 only)
-    transparency = 0 
+    transparency = 10
 
     # Draw a line of "separator_height" pixel height between two
     # notifications.
@@ -163,7 +163,8 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = %a\n%s\n%b
+    format = %s\n%b
+    #format = %a\n%s\n%b
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -214,7 +215,7 @@
     min_icon_size = 24 
 
     # Scale larger icons down to this size, set to 0 to disable
-    max_icon_size = 24 
+    max_icon_size = 48
 
     # Paths to default icons (only neccesary when not using recursive icon lookup)
     #icon_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
@@ -250,7 +251,7 @@
     # corners.
     # The radius will be automatically lowered if it exceeds half of the
     # notification height to avoid clipping text and/or icons.
-    corner_radius = 2
+    corner_radius = 10 
 
     # Ignore the dbus closeNotification message.
     # Useful to enforce the timeout set by dunst configuration. Without this
@@ -266,7 +267,7 @@
     # layer = top
 
     # Set this to true to use X11 output on Wayland.
-    force_xwayland = false
+    #force_xwayland = false
 
     ### Legacy
 
@@ -278,7 +279,7 @@
     # By enabling this setting dunst will not be able to detect when a monitor
     # is connected or disconnected which might break follow mode if the screen
     # layout changes.
-    force_xinerama = false
+    #force_xinerama = false
 
     ### mouse
 
