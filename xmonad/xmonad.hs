@@ -120,21 +120,22 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch a terminal
     [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
     -- launch dmenu
-    , ((modm,xK_d), spawn "dmenu_run")
+    , ((modm, xK_d), spawn "dmenu_run")
     -- launch gmrun
     , ((modm .|. shiftMask, xK_p), spawn "gmrun")
     -- close focused window
     , ((modm .|. shiftMask, xK_q), kill)
+    , ((controlMask, xK_w), kill)
     -- Rotate through the available layout algorithms
-    , ((modm,xK_space ), sendMessage NextLayout)
+    , ((modm, xK_space ), sendMessage NextLayout)
     --  Reset the layouts on the current workspace to default
     , ((modm .|. shiftMask, xK_space ), setLayout $ XMonad.layoutHook conf)
     -- Resize viewed windows to the correct size
-    , ((modm,xK_n), refresh)
+    , ((modm, xK_r), refresh)
     -- Move focus to the next window
-    , ((modm,xK_Tab   ), windows W.focusDown)
+    , ((modm, xK_Tab   ), windows W.focusDown)
     -- Move focus to the next window
-    , ((modm,xK_j), windows W.focusDown)
+    , ((modm, xK_j), windows W.focusDown)
     -- Move focus to the previous window
     , ((modm, xK_k), windows W.focusUp  )
     -- Move focus to the master window
@@ -166,7 +167,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- StopViper 
     , ((modm .|. mod1Mask, xK_v), spawn "viper stop; killall viper-gui")
     -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
-    , ((modm, xK_n), spawn "nemo")
+    , ((modm, xK_n), spawnHere "nemo")
     , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
     -- Fullscreen Toggle
     , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
@@ -180,9 +181,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- ((0 .|. shiftMask, xK_Print), spawn "flameshot gui -p $HOME/Pictures/Flameshts/Selection/")
     , ((0 .|. mod1Mask, xK_Print), spawn "flameshot gui")
     -- Maim 
-    , ((0, xK_Print), spawn "maim /home/cr33p3r/Pictures/Maimshts/Full/$(date +%s).png")
-    , ((0 .|. shiftMask, xK_Print), spawn "maim --select /home/cr33p3r/Pictures/Maimshts/Selection/$(date +%s).png")
-    , ((0 .|. controlMask, xK_Print), spawn "maim -i $(xdotool getactivewindow) -B /home/cr33p3r/Pictures/Maimshts/ActiveW/$(date +%s).png")
+    , ((0, xK_Print), spawn "maim $HOME/Pictures/Maimshts/Full/$(date +%s).png")
+    , ((0 .|. shiftMask, xK_Print), spawn "maim --select $HOME/Pictures/Maimshts/Selection/$(date +%s).png")
+    , ((0 .|. controlMask, xK_Print), spawn "maim -i $(xdotool getactivewindow) -B $HOME/Pictures/Maimshts/ActiveW/$(date +%s).png")
     -- Morc menu
     , ((modm, xK_z), spawn "morc_menu")
     -- ScratchPads
@@ -287,6 +288,7 @@ myStartupHook = do
    spawnOnce "xfce4-power-manager &"
    spawnOnce "pa-applet &"
    spawnOnce "start_conky_maia &"
+ --  spawnOnce "exec xhost +SI:localuser:$USER &"
 
 -- WINDOW RULES
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
@@ -301,11 +303,14 @@ myManageHook = composeAll
    , className =? "conky"                       --> doIgnore
    , className =? "Xfce4-notifyd"                       --> doIgnore
    , title     =? "Library"                     --> doCenterFloat
+   , title     =? "Navigator"                     --> doCenterFloat
+   , className =? "Navigator"                     --> doCenterFloat
    , className =? "Nitrogen"                    --> doCenterFloat
    , className =? "Browser"                     --> doCenterFloat
    , className =? "qbittorrent"                 --> doCenterFloat
    , className =? "Pavucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
+   , className =? "Xdm-app"                    --> doCenterFloat
    , className =? "java-lang-Thread"            --> doCenterFloat
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
