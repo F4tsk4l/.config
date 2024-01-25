@@ -288,6 +288,7 @@ myStartupHook = do
    spawnOnce "xfce4-power-manager &"
    spawnOnce "pa-applet &"
    spawnOnce "start_conky_maia &"
+   spawnOnce "xfce4-power-manager --daemon &"
  --  spawnOnce "exec xhost +SI:localuser:$USER &"
 
 -- WINDOW RULES
@@ -316,7 +317,9 @@ myManageHook = composeAll
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
    , className =? "viper-gui"                   --> doCenterFloat
    , className =? "Soffice"                     --> doCenterFloat
+   , className =? "TIPP10"                      --> doCenterFloat
    , className =? "Gimp-2.10"                   --> (doFullFloat <+> doShift "5")
+   , className =? "typingmaster.exe"            --> (doFullFloat <+> doShift "4")
    , className =? "VirtualBox Machine"          --> doShift "4"
    , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
    , className =? "VirtualBox Manager"          --> doShift ( myWorkspaces !! 3 ) 
