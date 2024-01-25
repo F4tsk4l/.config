@@ -11,15 +11,19 @@ end
 alias ls "eza --icons"
 alias ll "eza -al --icons"
 alias l  "eza -a --icons"
-alias vim "nvim"
+#Set whoami variable
+set me "$(whoami)"
+alias notes "nvim /run/media/"$me"/Local\ Disk/Txt/Notes.txt"
+#alias vim "nvim"
 alias rmr "rm -rf"
 alias cls "clear"
-alias cdld "cd '/run/media/sc0rp/Local Disk/'"
+alias cdld "cd /run/media/"$me"/Local\ Disk/"
 alias yayi "yay -S --cleanafter"
 
 set -g PATH "$HOME/.local/bin:$PATH"
 set fish_greeting ""
 export VISUAL=nvim
 export EDITOR="$VISUAL"
-
+export LD_PRELOAD=/usr/lib/libgtk3-nocsd.so.0
+#export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libgtk3-nocsd.so.0
 #if [-z "$TMUX"]; then tmux; fi
