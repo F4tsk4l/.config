@@ -3,8 +3,8 @@ Config {
    -- Appearance
      -- font = "xft:Terminus-11"
      font            = "Joist Bold Italic 8"
-       , additionalFonts = [ "symbols nerd font 11"
-                            , "Mononoki Nerd Font 30"
+       , additionalFonts = [ "symbols nerd font 10"
+                            , "Mononoki Nerd Font 20"
        
                            ]
 
@@ -23,7 +23,7 @@ Config {
    -- Layout
      , sepChar =  "%"   -- delineator between plugin names and straight text
      , alignSep = "}{"  -- separator between left-right alignment
-     , template = "%UnsafeStdinReader% }{ %date% |  %disku%  |  %multicpu%  |  %coretemp%  |  %swap%  |  %memory%  |  %dynnetwork%  | %battery%"  
+     , template = "%UnsafeStdinReader% }{ %date% |  %disku%  |  %multicpu%  |  %coretemp%  |  %swap%  |  %memory%  |  %mycon%  %dynnetwork%  | %battery%"  
 
    -- general behavior
      , lowerOnStart = True    -- send to bottom of window stack on start
@@ -53,7 +53,7 @@ Config {
         [
 
         -- Network activity monitor (dynamic interface resolution)
-          Run DynNetwork     [ "--template" , "<dev> <fn=1>\xf1eb</fn>  :  <tx> kB/s | <rx> kB/s"
+          Run DynNetwork     [ "--template" , ": <tx> kB/s | <rx> kB/s"
                              , "--Low"      , "1000"       -- units: B/s
                              , "--High"     , "5000"       -- units: B/s
                              , "--low"      , "#ABABAB"
@@ -107,8 +107,7 @@ Config {
                              ] 50
 
         -- Time and date indicator
-        , Run Date           "<fc=#2ECC71>%F</fc>   <fc=blue>(%a)</fc>   <fc=#2ECC71>%T</fc>" "date" 10
-
+        , Run Date           "<fn=1>\xf00ed</fn><fc=#2ECC71>  %F</fc> <fc=white>| %a</fc>   <fn=1>\xe641</fn><fc=#2ECC71>  %T</fc>" "date" 10
         -- Keyboard layout indicator
         -- Run Kbd            [ ("us"  , "<fc=#8B0000>US</fc>")]
         , Run Swap           [ "--template" ,"<fn=1>\xf0fb4</fn>  :  <used> MiB"
@@ -126,6 +125,6 @@ Config {
         , Run UnsafeStdinReader
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
 --        , Run Com "/home/cr33p3r/.config/xmobar/trayer-padding-icon.sh" [] "trayerpad" 5 
-
+        , Run Com "/home/sc0rp/.local/bin/connection" [] "mycon"  5
        ]
 }
