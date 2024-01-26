@@ -284,7 +284,7 @@ myStartupHook = do
    spawnOnce "nitrogen --restore &"
    spawnOnce "picom &"
    spawnOnce "xfce4-notifyd &"
-   spawnOnce "trayer --edge top --distance 0 --align right --width 5 --iconspacing 0 --SetDockType true --padding 2 --expand false --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17 &"
+   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 3 --SetDockType true --padding 3 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17 &"
    spawnOnce "xfce4-power-manager &"
    spawnOnce "pa-applet &"
    spawnOnce "start_conky_maia &"
