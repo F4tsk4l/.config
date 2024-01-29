@@ -76,7 +76,7 @@ import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(.
 ----------------------------------------------------------
 -- MyTerminal
 myTerminal :: String
-myTerminal = "xfce4-terminal"
+myTerminal = "alacritty"
 
 myFont :: String
 myFont = "xft:Font Mono:regular:size=9:antialias=true:hinting=true"
@@ -281,14 +281,15 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 -- MyStartup Hooks
 myStartupHook :: X ()
 myStartupHook = do
-   spawnOnce "nitrogen --restore &"
-   spawnOnce "picom &"
-   spawnOnce "xfce4-notifyd &"
-   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 3 --SetDockType true --padding 3 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17 &"
-   spawnOnce "xfce4-power-manager &"
-   spawnOnce "pa-applet &"
-   spawnOnce "start_conky_maia &"
-   spawnOnce "xfce4-power-manager --daemon &"
+   spawnOnce "nitrogen --restore"
+   spawnOnce "picom"
+   spawnOnce "xfce4-notifyd"
+   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 3 --SetDockType true --padding 3 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
+   spawnOnce "xfce4-power-manager"
+   spawnOnce "pa-applet"
+   spawnOnce "start_conky_maia"
+   spawnOnce "xfce4-power-manager --daemon"
+   setWMName "LG3D"
  --  spawnOnce "exec xhost +SI:localuser:$USER &"
 
 -- WINDOW RULES
@@ -298,20 +299,21 @@ myManageHook = composeAll
    , className =? "PacketTracer"                --> doCenterFloat
    , resource  =? "desktop_window"              --> doIgnore
    , className =? "trayer"                      --> doIgnore
-   , title     =? "* Properties"                  --> doCenterFloat
+   , title     =? "* Properties"                --> doCenterFloat
    -- className =? "libreoffice-base" <&&> resource =? "libreoffice" --> doShift "5"
    , resource  =? "libreoffice-writer"          --> (doFullFloat <+> doShift "5")
    , className =? "conky"                       --> doIgnore
-   , className =? "Xfce4-notifyd"                       --> doIgnore
+   , className =? "Xfce4-notifyd"               --> doIgnore
    , title     =? "Library"                     --> doCenterFloat
-   , title     =? "Navigator"                     --> doCenterFloat
-   , className =? "Navigator"                     --> doCenterFloat
+   , title     =? "Text search"                 --> doCenterFloat
+   , title     =? "Navigator"                   --> doCenterFloat
+   --, className =? "ghidra-Ghidra"               --> doCenterFloat
    , className =? "Nitrogen"                    --> doCenterFloat
    , className =? "Browser"                     --> doCenterFloat
    , className =? "qbittorrent"                 --> doCenterFloat
    , className =? "Pavucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
-   , className =? "Xdm-app"                    --> doCenterFloat
+   , className =? "Xdm-app"                     --> doCenterFloat
    , className =? "java-lang-Thread"            --> doCenterFloat
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
