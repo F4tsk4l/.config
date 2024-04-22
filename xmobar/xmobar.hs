@@ -10,7 +10,7 @@ Config {
      , bgColor = "black"
      , iconRoot     = "/home/sc0rp/.xmonad/xpm/"  -- default: "."
      , fgColor = "#F8F8F8"
-     , alpha = 140
+     , alpha = 255
      -- position = TopP 0 40
      -- position = TopW L 95
      , position =  TopSize L 100 18 
