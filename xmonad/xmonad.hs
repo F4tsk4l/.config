@@ -122,7 +122,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch dmenu
     , ((modm, xK_d), spawn "dmenu_run")
     -- launch gmrun
-    , ((modm .|. shiftMask, xK_p), spawn "gmrun")
+    --, ((modm .|. shiftMask, xK_p), spawn "gmrun")
     -- close focused window
     , ((modm .|. shiftMask, xK_q), kill)
     , ((controlMask, xK_w), kill)
@@ -169,6 +169,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
     , ((modm, xK_n), spawnHere "nemo")
     , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
+    , ((modm , xK_p), spawn "deadd") 
     -- Fullscreen Toggle
     , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Browsers
@@ -191,8 +192,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_s), dynamicNSPAction "dny1")
     -- Pavucontrol
     , ((modm .|. controlMask, xK_m), spawn "pavucontrol")
-    -- Clipit
-    , ((modm .|. shiftMask .|. controlMask, xK_c), spawn "clipit")
    ]++
 
     [((m .|. modm, k), windows $ f i)
@@ -283,10 +282,12 @@ myStartupHook :: X ()
 myStartupHook = do
    spawnOnce "nitrogen --restore"
    spawnOnce "picom"
-   spawnOnce "xfce4-notifyd"
-   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 3 --SetDockType true --padding 3 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
+   --spawnOnce "deadd-notification-center"
+   --spawnOnce "xfce4-notifyd"
+   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 3 --SetDockType true --padding 3 --expand True --monitor 1 --transparent true --alpha 80 --tint 0xff000000 --height 17"
    spawnOnce "xfce4-power-manager"
    spawnOnce "pa-applet"
+   spawnOnce "nm-applet"
    spawnOnce "start_conky_maia"
    spawnOnce "xfce4-power-manager --daemon"
    setWMName "LG3D"
@@ -295,39 +296,40 @@ myStartupHook = do
 -- WINDOW RULES
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
-   [ className =? "Gimp"                        --> (doFullFloat <+> doShift "5")
+   [ className =? "Gimp"                        --> (doFloat <+> doShift "4")
    , className =? "PacketTracer"                --> doCenterFloat
    , resource  =? "desktop_window"              --> doIgnore
    , className =? "trayer"                      --> doIgnore
    , title     =? "* Properties"                --> doCenterFloat
-   -- className =? "libreoffice-base" <&&> resource =? "libreoffice" --> doShift "5"
-   , resource  =? "libreoffice-writer"          --> (doFullFloat <+> doShift "5")
    , className =? "conky"                       --> doIgnore
    , className =? "Xfce4-notifyd"               --> doIgnore
+   , className =? "deadd-notification-center"   --> doIgnore
    , title     =? "Library"                     --> doCenterFloat
    , title     =? "Text search"                 --> doCenterFloat
    , title     =? "Navigator"                   --> doCenterFloat
-   --, className =? "ghidra-Ghidra"               --> doCenterFloat
    , className =? "Nitrogen"                    --> doCenterFloat
    , className =? "Browser"                     --> doCenterFloat
    , className =? "qbittorrent"                 --> doCenterFloat
    , className =? "Pavucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
    , className =? "Xdm-app"                     --> doCenterFloat
+   , className =? "Uget-gtk"                    --> doCenterFloat
    , className =? "java-lang-Thread"            --> doCenterFloat
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
    , className =? "viper-gui"                   --> doCenterFloat
    , className =? "Soffice"                     --> doCenterFloat
    , className =? "TIPP10"                      --> doCenterFloat
-   , className =? "Gimp-2.10"                   --> (doFullFloat <+> doShift "5")
-   , className =? "typingmaster.exe"            --> (doFullFloat <+> doShift "4")
-   , className =? "VirtualBox Machine"          --> doShift "4"
+   , className =? "Gimp-2.10"                   --> (doFloat <+> doShift "4")
+   , className =? "Inkscape"                    --> (doFloat <+> doShift "4")
+   , className =? "whatsdesk"                   --> doShift (myWorkspaces !! 2) 
+   , className =? "VirtualBox Machine"          --> doShift ( myWorkspaces !! 3 )
    , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
    , className =? "VirtualBox Manager"          --> doShift ( myWorkspaces !! 3 ) 
    , className =? "obsidian"                    --> doShift ( myWorkspaces !! 2)
-   , className =? "libreoffice-startcenter"     --> (doFullFloat <+> doShift "4") 
-   , className =? "xfreerdp"                    -->  doShift "3"
+   , className =? "libreoffice-startcenter"     --> doShift "4" 
+   , className =? "libreoffice-writer"          --> doShift "4" 
+   , className =? "xfreerdp"                    --> doShift ( myWorkspaces !! 2 )
    , (isFullscreen                              --> doFullFloat)
    ]
 
@@ -335,7 +337,6 @@ main :: IO ()
 main = do
   xmproc <- spawnPipe "/usr/bin/xmobar"
   xmonad $ docks $ fullscreenSupportBorder $ ewmh $ def {
-            -- simple stuff
      terminal           = myTerminal,
      focusFollowsMouse  = myFocusFollowsMouse,
      clickJustFocuses   = myClickJustFocuses,
@@ -344,10 +345,8 @@ main = do
      borderWidth        = myBorderWidth,
      normalBorderColor  = myNormColor,
      focusedBorderColor = myFocusedColor,
-    -- key bindings
      keys               = myKeys,
      mouseBindings      = myMouseBindings,
-    -- hooks, layouts
      layoutHook         = myLayoutHook,
      handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook, 
      manageHook         = myManageHook <+> manageDocks <+> manageSpawn, 
