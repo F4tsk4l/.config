@@ -4,7 +4,7 @@
 
 ---
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-Pluging source *[more](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)*.
+Pluging source *[link](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)*.
 
 ### Zsh-syntax-highlighting
 Using your package manager.
