@@ -1,6 +1,7 @@
 --IMPORT
 import XMonad
 import XMonad.Config.Desktop
+import XMonad.Config.Xfce
 import System.Directory
 import System.IO
 import System.Exit
@@ -158,12 +159,13 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_period), sendMessage (IncMasterN (-1)))
    ----------------------------------
     -- Quit xmonad
-    , ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
+    --, ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
+    , ((modm .|. shiftMask, xK_c), spawn "xfce4-session-logout")
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
     -- MY KEYBINDINGS
     -- StartViper 
-    , ((modm .|. shiftMask, xK_v), spawn "viper start; viper-gui -t")
+    , ((modm .|. shiftMask, xK_v), spawn "viper start; viper-gui -i")
     -- StopViper 
     , ((modm .|. mod1Mask, xK_v), spawn "viper stop; killall viper-gui")
     -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
@@ -280,18 +282,18 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 -- MyStartup Hooks
 myStartupHook :: X ()
 myStartupHook = do
-   spawnOnce "nitrogen --restore"
-   spawnOnce "picom"
-   --spawnOnce "deadd-notification-center"
-   --spawnOnce "xfce4-notifyd"
-   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 3 --SetDockType true --padding 3 --expand True --monitor 1 --transparent true --alpha 80 --tint 0xff000000 --height 17"
-   spawnOnce "xfce4-power-manager"
-   spawnOnce "pa-applet"
-   spawnOnce "nm-applet"
-   spawnOnce "start_conky_maia"
    spawnOnce "xfce4-power-manager --daemon"
+   spawnOnce "nitrogen --restore"
+   spawnOnce "pulseaudio --start"
+   spawnOnce "picom"
+   spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
+   spawnOnce "start_conky_maia"
+   spawnOnce "volumeicon"
    setWMName "LG3D"
- --  spawnOnce "exec xhost +SI:localuser:$USER &"
+   --spawnOnce "cmst -m"
+   --spawnOnce "/usr/bin/deadd-notification-center"
+   --spawnOnce "xfce4-notifyd"
+   --spawnOnce "exec xhost +SI:localuser:$USER &"
 
 -- WINDOW RULES
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
@@ -301,6 +303,7 @@ myManageHook = composeAll
    , resource  =? "desktop_window"              --> doIgnore
    , className =? "trayer"                      --> doIgnore
    , title     =? "* Properties"                --> doCenterFloat
+  -- , title     =? "* joinhoney"                --> doCenterFloat
    , className =? "conky"                       --> doIgnore
    , className =? "Xfce4-notifyd"               --> doIgnore
    , className =? "deadd-notification-center"   --> doIgnore
@@ -309,11 +312,18 @@ myManageHook = composeAll
    , title     =? "Navigator"                   --> doCenterFloat
    , className =? "Nitrogen"                    --> doCenterFloat
    , className =? "Browser"                     --> doCenterFloat
+   , appName   =? "cmst"                        --> doCenterFloat
+   , appName   =? "Msgcompose"                        --> doCenterFloat
+   --, appName   =? "Navigator"                   --> doCenterFloat
    , className =? "qbittorrent"                 --> doCenterFloat
    , className =? "Pavucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
    , className =? "Xdm-app"                     --> doCenterFloat
    , className =? "Uget-gtk"                    --> doCenterFloat
+   , appName   =? "file_properties"             --> doCenterFloat
+   , appName   =? "Calendar"                    --> doCenterFloat
+   , appName   =? "Dark Reader developer tools" --> doCenterFloat
+   , title     =? "Choose an icon"              --> doCenterFloat
    , className =? "java-lang-Thread"            --> doCenterFloat
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
@@ -336,7 +346,7 @@ myManageHook = composeAll
 main :: IO ()
 main = do
   xmproc <- spawnPipe "/usr/bin/xmobar"
-  xmonad $ docks $ fullscreenSupportBorder $ ewmh $ def {
+  xmonad  $ docks $ fullscreenSupportBorder $ ewmh $ xfceConfig {
      terminal           = myTerminal,
      focusFollowsMouse  = myFocusFollowsMouse,
      clickJustFocuses   = myClickJustFocuses,
