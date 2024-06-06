@@ -1,3 +1,4 @@
+#FISH TMUX PLUGIN conf
 #set fish_tmux_default_session_name 'launch'
 #set fish_tmux_autoquit false
 #set fish_tmux_detached true
@@ -7,24 +8,6 @@
 #set fish_tmux_autostart_once true
 #set fish_tmux_autoconnect false
 #set fish_tmux_unicode true
-#set fish_tmux_config /home/g4m3r/.config/tmux/tmux.conf
-
-#if status is-interactive
-#    if not set -q TMUX
-#        if test -e "$HOME/.tmux_launched"
-#            set -g TMUX tmux new -d -s launch
-#            touch "$HOME/.tmux_launched"
-#            eval $TMUX
-#        else
-#            set session_exists (tmux has-session -t launch; echo $status)
-#            if test $session_exists -eq 0
-#                tmux a -d -t launch
-#            else
-#                rm -f "$HOME/.tmux_launched"
-#            end
-#        end
-#    end
-#end
 
 if status is-interactive
     if not set -q TMUX
@@ -55,11 +38,12 @@ alias cat "bat"
 alias rmr "rm -rf"
 alias cls "clear"
 alias yayi "yay -S --cleanafter"
+#alias vim "nvim"
+
 #Set whoami variable
 #set me "$(whoami)"
 #alias notes "nvim /run/media/"$me"/Local\ Disk/Txt/Notes.txt"
 #alias cdld "cd /run/media/"$me"/Local\ Disk/"
-#alias vim "nvim"
 
 export VISUAL=nvim
 export EDITOR="$VISUAL"
