@@ -1,5 +1,5 @@
 ## Picom used
-Jonaburg Picom "*[github](https://github.com/jonaburg/picom)*".
+Jonaburg Picom *[github](https://github.com/jonaburg/picom)*.
 
 #### Installation 
     git clone https://github.com/jonaburg/picom
