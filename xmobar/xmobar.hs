@@ -17,10 +17,6 @@ Config {
      --, position = Static {xpos = 0, ypos = 0, width = 1298, height = 17}
      , allDesktops = True
      , overrideRedirect = True
-     , sepChar =  "%"   -- delineator between plugin names and straight text
-     , alignSep = "}{"  -- separator between left-right alignment
-     , template = "%UnsafeStdinReader% }{ %date% |  %disku%  |  %multicpu%  |  %coretemp%  |  %swap%  |  %memory%  |  %mycon%%dynnetwork%  | %battery% |%trayerpad%"  
-
      , lowerOnStart = True-- send to bottom of window stack on start
      , hideOnStart =  False   -- start with window unmapped (hidden)
    -- overrideRedirect = True    -- set the Override Redirect flag (Xlib)
@@ -29,64 +25,66 @@ Config {
 
      , commands =
         [
-          Run DynNetwork     [ "--template" , ":  <tx> kB/s | <rx> kB/s"
+          Run DynNetwork     [ "--template" , ":  <tx> kB/s : <rx> kB/s"
                              , "--Low"      , "1000"       -- units: B/s
                              , "--High"     , "5000"       -- units: B/s
-                             , "--low"      , "#ABABAB"
-                             , "--normal"   , "white"
+                             , "--low"      , "#F8F8F8"
+                             , "--normal"   , "#F8F8F8"
                              , "--high"     , "#2ECC71"
                              ] 10
-        , Run MultiCpu       [ "--template" , "<fn=1>\xf0ee0</fn>  :  <total0> %"
+        , Run MultiCpu       [ "--template" , "<fc=#E88D67><fn=1>\xf0ee0</fn></fc> : <total0> %"
                              , "--Low"      , "50"         -- units: %
                              , "--High"     , "85"         -- units: %
-                             , "--low"      , "#ABABAB"
-                             , "--normal"   , "white"
-                             , "--high"     , "red"
+                             , "--low"      , "#F8F8F8"
+                             , "--normal"   , "#F8F8F8"
+                             , "--high"     , "#FF000D"
                              ] 10
-        , Run CoreTemp       [ "--template" , "<fn=1>\xf2c8</fn>  :  <core0>°C"
+        , Run CoreTemp       [ "--template" , "<fc=#FF000D><fn=1>\xf2c8</fn></fc> : <core0>°C"
                              , "--Low"      , "70"        -- units: °C
                              , "--High"     , "80"        -- units: °C
-                             , "--low"      , "#ABABAB"
-                             , "--normal"   , "white"
-                             , "--high"     , "red"
+                             , "--low"      , "#F8F8F8"
+                             , "--normal"   , "#F8F8F8"
+                             , "--high"     , "#FF000D"
                              ] 50
-        , Run Memory         [ "--template" , "<fn=1>\xf035b</fn>  :  <used>MiB"
+        , Run Memory         [ "--template" , "<fc=#D10363><fn=1>\xf035b</fn></fc> : <used> MB"
                              , "--Low"      , "1536"        -- units: %
                              , "--High"     , "2560"        -- units: %
-                             , "--low"      , "#ABABAB"
-                             , "--normal"   , "white"
-                             , "--high"     , "red"
+                             , "--low"      , "#F8F8F8"
+                             , "--normal"   , "#F8F8F8"
+                             , "--high"     , "#FF000D"
                              ] 10
         , Run Battery        [ "--template" , "<acstatus>"
                              , "--Low"      , "30"        -- units: %
                              , "--High"     , "85"        -- units: %
-                             , "--low"      , "red"
-                             , "--normal"   , "#ABABAB"
-                             , "--high"     , "#ABABAB"
-
-
+                             , "--low"      , "#FF000D"
+                             , "--normal"   , "#F8F8F8"
+                             , "--high"     , "#F8F8F8"
                              , "--" -- battery specific options
                                        -- discharging status
-                                       , "-o"	, "<fc=#ABABAB><fn=1>\xf0079</fn></fc> <fc=#F8F8F8><left>% (<timeleft>)</fc>"
+                                       , "-o"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>% (<timeleft>)"
                                        -- AC "on" status
-                                       , "-O"	, "<fc=#ABABAB><fn=1>\xf089e</fn></fc>  <fc=#F8F8F8><left>%</fc>"
+                                       , "-O"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>%"
                                        -- charged status
-                                       , "-i"	, "<fc=#ABABAB><fn=1>\xf0085</fn></fc>  <fc=#F8F8F8><left>%</fc>"
+                                       , "-i"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>%"
                              ] 50
-        , Run Date           "<fn=1>\xf00ed</fn><fc=#2ECC71>  %F</fc> <fc=white>| %a</fc>   <fn=1>\xe641</fn><fc=#2ECC71>  %T</fc>" "date" 10
+        --, Run Date           "<fn=1>\xf00ed</fn> %F  | %a  <fn=1>\xe641</fn>  %T" "date" 10
+        , Run Date           "<fc=#FF8080><fn=1>\xf00ed</fn>  %F</fc> <fc=#FF004D>  %A </fc> <fc=#F8F8F8><fn=1>\xe641</fn>  %H:%M </fc>" "date" 10
         -- Keyboard layout indicator
-        -- Run Kbd            [ ("us"  , "<fc=#8B0000>US</fc>")]
-        , Run Swap           [ "--template" ,"<fn=1>\xf0fb4</fn>  :  <used> MiB"
+        -- Run Kbd            [ ("us"  , "<fc=#FF000D>US")]
+        , Run Swap           [ "--template" ,"<fc=#03AED2><fn=1>\xf0fb4</fn></fc> : <used> MB"
                              , "--Low"      , "500"        -- units: %
                              , "--High"     , "1504"        -- units: %
                              , "--low"      , "#F8F8F8"
-                             , "--normal"   , "white"
-                             , "--high"     , "red"
+                             , "--normal"   , "#F8F8F8"
+                             , "--high"     , "#FF000D"
                              ] 10
-        , Run DiskU [("/", "<fn=1>\xf02ca</fn> : <fc=#F8F8F8><free></fc>")] [] 60
+        , Run DiskU [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
         , Run UnsafeStdinReader
+        , Run Com "/home/g4m3r/.local/bin/connection" [] "mycon"  5
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
         , Run Com "/home/g4m3r/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
-        , Run Com "/home/g4m3r/.local/bin/connection" [] "mycon"  5
        ]
+    , sepChar =  "%"   -- delineator between plugin names and straight text
+    , alignSep = "}{"  -- separator between left-right alignment
+    , template = "%UnsafeStdinReader% }{ <box type=Bottom width=2 mb=1 color=#FF004D>%date%</box>  <box type=Bottom width=2 mb=1 color=#FFF455> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E88D67> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#FF000D> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#03AED2> %swap% </box>  <box type=Bottom width=2 mb=1 color=#D10363> %memory% </box>  <box type=Bottom width=2 mb=1 color=#06D001> <fc=#06D001>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#59D5E0>  %battery% </box> %trayerpad%"
 }
