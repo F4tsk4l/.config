@@ -61,14 +61,14 @@ Config {
                              , "--high"     , "#F8F8F8"
                              , "--" -- battery specific options
                                        -- discharging status
-                                       , "-o"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>% (<timeleft>)"
+                                       , "-o"	, "<fc=#59D5E0><fn=1>\xf0080</fn></fc>  <left>% (<timeleft>)"
                                        -- AC "on" status
-                                       , "-O"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>%"
+                                       , "-O"	, "<fc=#59D5E0><fn=1>\xf0089</fn></fc>  <left>%"
                                        -- charged status
                                        , "-i"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>%"
                              ] 50
         --, Run Date           "<fn=1>\xf00ed</fn> %F  | %a  <fn=1>\xe641</fn>  %T" "date" 10
-        , Run Date           "<fc=#FF8080><fn=1>\xf00ed</fn>  %F</fc> <fc=#FF004D>  %A </fc> <fc=#F8F8F8><fn=1>\xe641</fn>  %H:%M </fc>" "date" 10
+        , Run Date           "<fc=#F8F8F8><fn=1>\xf00ed</fn>  %F</fc> <fc=#BC5A94>  %A </fc> <fc=#F8F8F8><fn=1>\xe641</fn>  %H:%M </fc>" "date" 10
         -- Keyboard layout indicator
         -- Run Kbd            [ ("us"  , "<fc=#FF000D>US")]
         , Run Swap           [ "--template" ,"<fc=#03AED2><fn=1>\xf0fb4</fn></fc> : <used> MB"
@@ -86,5 +86,5 @@ Config {
        ]
     , sepChar =  "%"   -- delineator between plugin names and straight text
     , alignSep = "}{"  -- separator between left-right alignment
-    , template = "%UnsafeStdinReader% }{ <box type=Bottom width=2 mb=1 color=#FF004D>%date%</box>  <box type=Bottom width=2 mb=1 color=#FFF455> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E88D67> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#FF000D> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#03AED2> %swap% </box>  <box type=Bottom width=2 mb=1 color=#D10363> %memory% </box>  <box type=Bottom width=2 mb=1 color=#06D001> <fc=#06D001>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#59D5E0>  %battery% </box> %trayerpad%"
+    , template = "%UnsafeStdinReader% }{ <box type=Bottom width=2 mb=1 color=#E7D4B5>%date%</box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %swap% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %memory% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> <fc=#FF8080>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5>  %battery% </box> %trayerpad%"
 }
