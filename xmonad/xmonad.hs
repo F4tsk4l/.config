@@ -18,6 +18,7 @@ import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Cursor
 
 -- Action
+import XMonad.Actions.TagWindows
 import XMonad.Actions.MouseResize
 import XMonad.Actions.WorkspaceNames
 import XMonad.Actions.SpawnOn
@@ -33,7 +34,6 @@ import XMonad.Layout.ThreeColumns
 -- Layouts modifiers
 import XMonad.Layout.Gaps
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
-import XMonad.Actions.NoBorders
 import XMonad.Layout.Fullscreen
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Renamed
@@ -66,6 +66,7 @@ import qualified Data.Map as M
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.EwmhDesktops 
 import XMonad.Hooks.Place
+import XMonad.Hooks.XPropManage
 import XMonad.Hooks.ManageDocks
 import XMonad.Hooks.DynamicLog 
 import XMonad.Hooks.StatusBar
@@ -84,10 +85,15 @@ myFont = "xft:Font Mono:regular:size=9:antialias=true:hinting=true"
 
 -- Windows border in pixels
 myBorderWidth :: Dimension
-myBorderWidth = 1
+myBorderWidth = 2
+
+myActiveTextColor :: String
+myActiveTextColor = "#06D001"
+
+myInactiveTextColor :: String
+myInactiveTextColor = "#BC5A94"
 
 myNormColor :: String
---myNormColor  = "#fd1c03"
 myNormColor  = "#282c34"
 
 myFocusedColor :: String
@@ -108,7 +114,8 @@ myModMask = mod4Mask
 
 -- MyWorkspaces
 myWorkspaces :: [String]
-myWorkspaces = map show [1..9]
+-- myWorkspaces = map show [1..9]
+myWorkspaces    = [" 1 "," 2 "," 3 "," 4 "," 5 "," 6 "," 7 "," 8 "," 9 "]
 
 -- Clickable workspaces
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..9] 
@@ -119,7 +126,7 @@ clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
 -- KeyBindings
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch a terminal
-    [ ((modm .|. shiftMask, xK_Return), spawn $ XMonad.terminal conf)
+    [ ((modm .|. shiftMask, xK_Return), spawnHere $ XMonad.terminal conf)
     -- launch dmenu
     , ((modm, xK_d), spawn "dmenu_run")
     -- launch gmrun
@@ -177,6 +184,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Browsers
     , ((modm .|. shiftMask, xK_f), spawnHere "firefox")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
+    , ((modm .|. shiftMask, xK_t), spawnHere "thunderbird")
     , ((modm .|. controlMask, xK_l), spawnHere "librewolf")
     -- Screenshot
     -- Flameshot 
@@ -232,10 +240,10 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
 -- My spacing; n sets the gap size around the windows.
 ------------------------------------------------------
 tall     = renamed [Replace "tall"]
+           $ limitWindows 5
            $ smartBorders
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
            $ mySpacing 2
            $ ResizableTall 1 (3/100) (1/2) []
 monocle  = renamed [Replace "monocle"]
@@ -248,27 +256,27 @@ tabs     = renamed [Replace "tabs"]
            $ tabbed shrinkText myTabTheme
 -----------------------------------------------------
 myTabTheme = def { fontName            = myFont
-                 , activeColor         = myFocusedColor 
-                 , inactiveColor       = "#202328" 
-                 , activeBorderColor   = myFocusedColor 
-                 , inactiveBorderColor = myNormColor 
-                 , activeTextColor     = myNormColor 
-                 , inactiveTextColor   = "#dfdfdf" 
+                 , activeColor         = myFocusedColor
+                 , inactiveColor       = myNormColor
+                 , activeBorderColor   = myFocusedColor
+                 , inactiveBorderColor = myNormColor
+                 , activeTextColor     = myActiveTextColor
+                 , inactiveTextColor   = myInactiveTextColor
                  }
 
---myShowWNameTheme :: SWNConfig
---myShowWNameTheme = def
---  { swn_font              = "xft:Ubuntu:bold:size=60"
---  , swn_fade              = 0.5
---  , swn_bgcolor           = "#1c1f24"
---  , swn_color             = "#ffffff"
---  }
+myShowWNameTheme :: SWNConfig
+myShowWNameTheme = def
+  { swn_font              = "xft:Ubuntu:bold:size=60"
+  , swn_fade              = 1.0
+  , swn_bgcolor           = "#1c1f24"
+  , swn_color             = "#ffffff"
+  }
  
 -- Layouts:
 myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
-               myDefaultLayout = withBorder myBorderWidth tall
-                                 ||| withBorder myBorderWidth monocle 
+               myDefaultLayout = withBorder myBorderWidth  tall
+                                 |||  monocle 
                                  ||| noBorders tabs
 
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
@@ -290,63 +298,75 @@ myStartupHook = do
    spawnOnce "start_conky_maia"
    spawnOnce "volumeicon"
    setWMName "LG3D"
-   --spawnOnce "cmst -m"
+   spawnOnce "cmst -m"
    --spawnOnce "/usr/bin/deadd-notification-center"
    --spawnOnce "xfce4-notifyd"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
 
+
+xPropMatches :: [XPropMatch]
+xPropMatches = [ --([ (wM_CLASS, any ("explorer.exe"==))], (\w -> float w >> return (W.shift "2")))
+               --, ([ (wM_COMMAND, any ("screen" ==)), (wM_CLASS, any ("xterm" ==))], pmX (addTag "screen"))
+                ([ (wM_NAME, any ("MavisBeacon" `isInfixOf`))], pmX (addTag "Beacon"))
+                --([ (wM_NAME, any ("MavisBeacon" `isInfixOf`))], (\w -> float w >> return (W.shift "2")))
+               ]
+
 -- WINDOW RULES
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
 myManageHook = composeAll
-   [ className =? "Gimp"                        --> (doFloat <+> doShift "4")
-   , className =? "PacketTracer"                --> doCenterFloat
-   , resource  =? "desktop_window"              --> doIgnore
-   , className =? "trayer"                      --> doIgnore
+   [ resource  =? "desktop_window"              --> doIgnore
    , title     =? "* Properties"                --> doCenterFloat
-  -- , title     =? "* joinhoney"                --> doCenterFloat
-   , className =? "conky"                       --> doIgnore
-   , className =? "Xfce4-notifyd"               --> doIgnore
-   , className =? "deadd-notification-center"   --> doIgnore
+   , title     =? "* joinhoney"                 --> doCenterFloat
    , title     =? "Library"                     --> doCenterFloat
    , title     =? "Text search"                 --> doCenterFloat
+   , title     =? "Choose an icon"              --> doCenterFloat
    , title     =? "Navigator"                   --> doCenterFloat
-   , className =? "Nitrogen"                    --> doCenterFloat
-   , className =? "Browser"                     --> doCenterFloat
    , appName   =? "cmst"                        --> doCenterFloat
-   , appName   =? "Msgcompose"                        --> doCenterFloat
-   --, appName   =? "Navigator"                   --> doCenterFloat
-   , className =? "qbittorrent"                 --> doCenterFloat
-   , className =? "Pavucontrol"                 --> doCenterFloat
-   , className =? "jamesdsp"                    --> doCenterFloat
-   , className =? "Xdm-app"                     --> doCenterFloat
-   , className =? "Uget-gtk"                    --> doCenterFloat
+   , appName   =? "Msgcompose"                  --> doCenterFloat
    , appName   =? "file_properties"             --> doCenterFloat
    , appName   =? "Calendar"                    --> doCenterFloat
    , appName   =? "Dark Reader developer tools" --> doCenterFloat
-   , title     =? "Choose an icon"              --> doCenterFloat
+   , className =? "conky"                       --> doIgnore
+   -- TODO:Add MavisBeacon to doCenterFloat
+   --, title     =? "MavisBeacon.exe - Wine desktop"  --> doCenterFloat
+   --, title     =? "MavisBeacon.exe *"               --> doCenterFloat
+   --, className =? "Explorer.exe"                --> doCenterFloat
+   , className =? "winecfg.exe"                 --> doCenterFloat
+   , className =? "trayer"                      --> doIgnore
+   , className =? "Xfce4-notifyd"               --> doIgnore
+   , className =? "deadd-notification-center"   --> doIgnore
+   , className =? "Nitrogen"                    --> doCenterFloat
+   , className =? "PacketTracer"                --> doCenterFloat
+   , className =? "Browser"                     --> doCenterFloat
+   , className =? "qbittorrent"                 --> doCenterFloat
+   , className =? "pavucontrol"                 --> doCenterFloat
+   , className =? "jamesdsp"                    --> doCenterFloat
+   , className =? "Xdm-app"                     --> doCenterFloat
+   , className =? "Uget-gtk"                    --> doCenterFloat
    , className =? "java-lang-Thread"            --> doCenterFloat
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
    , className =? "viper-gui"                   --> doCenterFloat
    , className =? "Soffice"                     --> doCenterFloat
    , className =? "TIPP10"                      --> doCenterFloat
+   , className =? "libreoffice-startcenter"     --> doShift "4" 
+   , className =? "libreoffice-writer"          --> doShift "4" 
+   , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
+   , className =? "Gimp"                        --> (doFloat <+> doShift "4")
    , className =? "Gimp-2.10"                   --> (doFloat <+> doShift "4")
    , className =? "Inkscape"                    --> (doFloat <+> doShift "4")
    , className =? "whatsdesk"                   --> doShift (myWorkspaces !! 2) 
-   , className =? "VirtualBox Machine"          --> doShift ( myWorkspaces !! 3 )
-   , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
-   , className =? "VirtualBox Manager"          --> doShift ( myWorkspaces !! 3 ) 
-   , className =? "obsidian"                    --> doShift ( myWorkspaces !! 2)
-   , className =? "libreoffice-startcenter"     --> doShift "4" 
-   , className =? "libreoffice-writer"          --> doShift "4" 
-   , className =? "xfreerdp"                    --> doShift ( myWorkspaces !! 2 )
+   , className =? "VirtualBox Machine"          --> doShift (myWorkspaces !! 3)
+   , className =? "VirtualBox Manager"          --> doShift (myWorkspaces !! 3) 
+   , className =? "obsidian"                    --> doShift (myWorkspaces !! 2)
+   , className =? "xfreerdp"                    --> doShift (myWorkspaces !! 2)
    , (isFullscreen                              --> doFullFloat)
    ]
 
 main :: IO ()
 main = do
   xmproc <- spawnPipe "/usr/bin/xmobar"
-  xmonad  $ docks $ fullscreenSupportBorder $ ewmh $ xfceConfig {
+  xmonad  $ docks $ ewmh $ xfceConfig {
      terminal           = myTerminal,
      focusFollowsMouse  = myFocusFollowsMouse,
      clickJustFocuses   = myClickJustFocuses,
@@ -359,19 +379,22 @@ main = do
      mouseBindings      = myMouseBindings,
      layoutHook         = myLayoutHook,
      handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook, 
-     manageHook         = myManageHook <+> manageDocks <+> manageSpawn, 
+     manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> xPropManageHook xPropMatches, 
      startupHook        = myStartupHook,
-     logHook = dynamicLogWithPP xmobarPP                                        -- Status bars and Logging
-       { ppOutput = hPutStrLn xmproc
-       , ppCurrent = xmobarColor "white" "" . wrap "[""]" . clickable           -- Current workspace in xmobar
-       , ppVisible = xmobarColor "#82AAFF" "" . clickable                       -- Visible but not current workspace
-       , ppHidden = xmobarColor "#ababab" "" . wrap " " "" . clickable          -- Hidden workspaces in xmobar; !!! Needed for clickability !!!
-       -- ppHiddenNoWindows = xmobarColor "#ababab" "" . clickable              -- Hidden workspaces (no windows)
-       -- ppTitle = xmobarColor "#b3afc2" "" . shorten 60                       -- Title of active window in xmobar
-       , ppSep =  "<fc=#82AAFF> <fn=1> ||</fn> </fc>"                           -- Separators in xmobar
-       , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!" . clickable         -- Urgent workspace
-       , ppExtras  = [windowCount]                                              --  of windows current workspace
+     logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
+       { ppOutput = hPutStrLn  xmproc
+       , ppCurrent = xmobarColor myActiveTextColor "" . wrap 
+                 ("<box type=Bottom width=2 mb=1 color=#06D001>") "</box>" . clickable      -- Current workspace in xmobar
+       , ppVisible = xmobarColor "#219C90" "" . clickable                                               -- Visible but not current workspace
+       , ppHidden = xmobarColor "#219C90" "" . wrap                                                   -- Hidden workspaces in xmobar; !!! Needed for clickability !!!
+                 ("<box type=Bottom width=2 mb=1 color=" ++ myInactiveTextColor ++ ">") "</box>" . clickable    -- Current workspace in xmobar
+       , ppHiddenNoWindows = xmobarColor "#ababab" "" . clickable                                               -- Hidden workspaces (no windows)
+       , ppTitle = xmobarColor "#b3afc2" "" . shorten 20                                                        -- Title of active window in xmobar
+       , ppSep =  "<fc=" ++ myFocusedColor ++ "><fn=1>  / </fn> </fc>"                                            -- Separators in xmobar
+       , ppUrgent = xmobarColor "#F80000" "" . wrap                                                             -- Urgent workspace
+                 ("<box type=Bottom width=2 mb=1 color=#F80000>") "</box>" . clickable                          -- Current workspace in xmobar
+       , ppExtras  = [windowCount]                                                                              --  of windows current workspace
        -- ppOrder = \(ws:l:t:_) -> [ws]
-       , ppOrder = \(ws:l:t:ex) -> [ws]++ex
+       , ppOrder = \(ws:l:t:ex) -> [ws,l]++ex++[t]
        }
 }
