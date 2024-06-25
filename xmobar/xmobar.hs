@@ -1,6 +1,6 @@
 Config {
    -- Appearance
-     font            = "Joist Bold Italic 8"
+         font            = "Joist Bold Italic 8"
        , additionalFonts = [ "symbols nerd font 10"
                             , "Mononoki Nerd Font 20"
        
@@ -10,7 +10,7 @@ Config {
      , bgColor = "black"
      , iconRoot = "/home/g4m3r/.xmonad/xpm/"  -- default: "."
      , fgColor = "#F8F8F8"
-     , alpha = 200
+     , alpha = 190
      -- position = TopP 0 40
      -- position = TopW L 95
      , position =  TopSize L 100 18 
