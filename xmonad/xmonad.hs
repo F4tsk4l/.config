@@ -383,7 +383,7 @@ main = do
      startupHook        = myStartupHook,
      logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
        { ppOutput = hPutStrLn  xmproc
-       , ppCurrent = xmobarColor myActiveTextColor "" . wrap 
+       , ppCurrent = xmobarColor "#59D5E0" "" . wrap 
                  ("<box type=Bottom width=2 mb=1 color=#06D001>") "</box>" . clickable      -- Current workspace in xmobar
        , ppVisible = xmobarColor "#219C90" "" . clickable                                               -- Visible but not current workspace
        , ppHidden = xmobarColor "#219C90" "" . wrap                                                   -- Hidden workspaces in xmobar; !!! Needed for clickability !!!
