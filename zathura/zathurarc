@@ -62,3 +62,4 @@ map f toggle_fullscreen
 map [fullscreen] f toggle_fullscreen
 map D set "first-page-column 1:1"
 map <C-d> set "first-page-column 1:2"
+map <C-i> recolor 
