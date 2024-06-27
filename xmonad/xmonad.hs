@@ -1,5 +1,6 @@
 --IMPORT
 import XMonad
+import XMonad.Prelude
 import XMonad.Config.Desktop
 import XMonad.Config.Xfce
 import System.Directory
@@ -23,8 +24,11 @@ import XMonad.Actions.MouseResize
 import XMonad.Actions.WorkspaceNames
 import XMonad.Actions.SpawnOn
 import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen)
+import XMonad.Actions.ToggleFullFloat
 
 -- Layouts
+import XMonad.Layout.Accordion
+import XMonad.Layout.GridVariants (Grid(Grid))
 import XMonad.Layout.SimplestFloat
 import XMonad.Layout.Spiral
 import XMonad.Layout.ResizableTile
@@ -32,20 +36,20 @@ import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
 
 -- Layouts modifiers
+import XMonad.Layout.LayoutHints
 import XMonad.Layout.Gaps
-import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
-import XMonad.Layout.Fullscreen
+import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS, FULL))
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Renamed
 import XMonad.Layout.NoBorders
 import XMonad.Layout.Spacing
+import XMonad.Layout.Simplest
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
 import XMonad.Layout.Magnifier
 import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
 import XMonad.Layout.Renamed
 import XMonad.Layout.ShowWName
-import XMonad.Layout.Simplest
 import XMonad.Layout.SubLayouts
 import XMonad.Layout.WindowNavigation
 import XMonad.Layout.WindowArranger (windowArrange, WindowArrangerMsg(..))
@@ -99,6 +103,7 @@ myNormColor  = "#282c34"
 myFocusedColor :: String
 myFocusedColor = "#46d9ff"
 
+--myEventHook = fullscreenEventHook
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -179,6 +184,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_n), spawnHere "nemo")
     , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
     , ((modm , xK_p), spawn "deadd") 
+    --, ((modm, xK_f), withFocused toggleFullFloat)
     -- Fullscreen Toggle
     , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Browsers
@@ -225,35 +231,68 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
 
--- Fullscreen Toggle
---toggleFull = withFocused (\windowId -> do    
---{       
---   floats <- gets (W.floating.windowset);        
---   if windowId `M.member` floats        
---   then do  
---       withFocused $ toggleBorder 
---       withFocused $ windows.W.sink        
---   else do 
---       withFocused $ toggleBorder           
---       withFocused $  windows . (flip W.float $ W.RationalRect 0 0 1 1)})
-
--- My spacing; n sets the gap size around the windows.
+ --My spacing; n sets the gap size around the windows.
 ------------------------------------------------------
 tall     = renamed [Replace "tall"]
            $ limitWindows 5
            $ smartBorders
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
+           $ subLayout [] (smartBorders Simplest)
            $ mySpacing 2
            $ ResizableTall 1 (3/100) (1/2) []
 monocle  = renamed [Replace "monocle"]
            $ smartBorders
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
-           $ mySpacing 2
+           $ subLayout [] (smartBorders Simplest)
            $ Full
+floats   = renamed [Replace "floats"]
+           $ smartBorders
+           $ simplestFloat
+--grid     = renamed [Replace "grid"]
+--           $ limitWindows 9
+--           $ smartBorders
+--           $ windowNavigation
+--           $ addTabs shrinkText myTabTheme
+--           $ subLayout [] (smartBorders Simplest)
+--           $ mySpacing 2
+--           $ mkToggle (single MIRROR)
+--           $ Grid (16/10)
+--spirals  = renamed [Replace "spirals"]
+--           $ limitWindows 9
+--           $ smartBorders
+--           $ windowNavigation
+--           $ addTabs shrinkText myTabTheme
+--           $ subLayout [] (smartBorders Simplest)
+--           $ mySpacing 2
+--           $ spiral (6/7)
+--threeCol = renamed [Replace "threeCol"]
+--           $ limitWindows 7
+--           $ smartBorders
+--           $ windowNavigation
+--           $ addTabs shrinkText myTabTheme
+--           $ subLayout [] (smartBorders Simplest)
+--           $ ThreeCol 1 (3/100) (1/2)
+--threeRow = renamed [Replace "threeRow"]
+--           $ limitWindows 7
+--           $ smartBorders
+--           $ windowNavigation
+--           $ addTabs shrinkText myTabTheme
+--           $ subLayout [] (smartBorders Simplest)
+--           -- Mirror takes a layout and rotates it by 90 degrees.
+--           -- So we are applying Mirror to the ThreeCol layout.
+--           $ Mirror
+--           $ ThreeCol 1 (3/100) (1/2)
 tabs     = renamed [Replace "tabs"]
+           -- I cannot add spacing to this layout because it will
+           -- add spacing between window and tabs which looks bad.
            $ tabbed shrinkText myTabTheme
+--tallAccordion  = renamed [Replace "tallAccordion"]
+--           $ Accordion
+--wideAccordion  = renamed [Replace "wideAccordion"]
+--           $ Mirror Accordion
+
 -----------------------------------------------------
 myTabTheme = def { fontName            = myFont
                  , activeColor         = myFocusedColor
@@ -266,19 +305,34 @@ myTabTheme = def { fontName            = myFont
 
 myShowWNameTheme :: SWNConfig
 myShowWNameTheme = def
-  { swn_font              = "xft:Ubuntu:bold:size=60"
-  , swn_fade              = 1.0
+  { swn_font              = "xft:Ubuntu:bold:size=30"
+  , swn_fade              = 0.3
   , swn_bgcolor           = "#1c1f24"
   , swn_color             = "#ffffff"
   }
  
--- Layouts:
-myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
-             where
-               myDefaultLayout = withBorder myBorderWidth  tall
-                                 |||  monocle 
-                                 ||| noBorders tabs
 
+-- Layouts:
+myLayoutHook = lessBorders OnlyFloat $ avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts floats $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
+  where
+    myDefaultLayout = withBorder myBorderWidth tall
+                   ||| noBorders monocle
+                   ||| tabs
+                   ||| floats
+--                 ||| grid
+--                 ||| spirals
+--                 ||| threeCol
+--                 ||| threeRow
+--                 ||| tallAccordion
+--                 ||| wideAccordion
+
+--myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ??NOBORDERS ?? FULL ?? EOT) (
+--                                  withBorder myBorderWidth  tall 
+--                                  ||| monocle 
+--                                  ||| noBorders tabs 
+--                                  ||| noBorders Full 
+--                                  )
+                                  
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
 mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
@@ -304,12 +358,12 @@ myStartupHook = do
    --spawnOnce "exec xhost +SI:localuser:$USER &"
 
 
-xPropMatches :: [XPropMatch]
-xPropMatches = [ --([ (wM_CLASS, any ("explorer.exe"==))], (\w -> float w >> return (W.shift "2")))
-               --, ([ (wM_COMMAND, any ("screen" ==)), (wM_CLASS, any ("xterm" ==))], pmX (addTag "screen"))
-                ([ (wM_NAME, any ("MavisBeacon" `isInfixOf`))], pmX (addTag "Beacon"))
-                --([ (wM_NAME, any ("MavisBeacon" `isInfixOf`))], (\w -> float w >> return (W.shift "2")))
-               ]
+--xPropMatches :: [XPropMatch]
+--xPropMatches = [ --([ (wM_CLASS, any ("explorer.exe"==))], (\w -> float w >> return (W.shift "2")))
+--               --, ([ (wM_COMMAND, any ("screen" ==)), (wM_CLASS, any ("xterm" ==))], pmX (addTag "screen"))
+--                ([ (wM_NAME, any ("MavisBeacon" `isInfixOf`))], pmX (addTag "Beacon"))
+--                --([ (wM_NAME, any ("MavisBeacon" `isInfixOf`))], (\w -> float w >> return (W.shift "2")))
+--               ]
 
 -- WINDOW RULES
 myManageHook :: XMonad.Query (Data.Monoid.Endo WindowSet)
@@ -349,39 +403,55 @@ myManageHook = composeAll
    , className =? "viper-gui"                   --> doCenterFloat
    , className =? "Soffice"                     --> doCenterFloat
    , className =? "TIPP10"                      --> doCenterFloat
-   , className =? "libreoffice-startcenter"     --> doShift "4" 
-   , className =? "libreoffice-writer"          --> doShift "4" 
-   , className =? "VirtualBoxVM"                --> (doFloat <+> doShift "4")
-   , className =? "Gimp"                        --> (doFloat <+> doShift "4")
-   , className =? "Gimp-2.10"                   --> (doFloat <+> doShift "4")
-   , className =? "Inkscape"                    --> (doFloat <+> doShift "4")
+   , className =? "Gimp"                        --> doFullFloat <+> doShift (myWorkspaces !! 4) 
+   , className =? "Gimp-2.10"                   --> doFullFloat <+> doShift (myWorkspaces !! 4) 
+   , className =? "libreoffice-startcenter"     --> doShift (myWorkspaces !! 4) 
+   , className =? "libreoffice-writer"          --> doShift (myWorkspaces !! 4) 
+   , className =? "VirtualBoxVM"                --> doShift (myWorkspaces !! 4) 
+   , className =? "Inkscape"                    --> doShift (myWorkspaces !! 4) 
    , className =? "whatsdesk"                   --> doShift (myWorkspaces !! 2) 
    , className =? "VirtualBox Machine"          --> doShift (myWorkspaces !! 3)
    , className =? "VirtualBox Manager"          --> doShift (myWorkspaces !! 3) 
    , className =? "obsidian"                    --> doShift (myWorkspaces !! 2)
    , className =? "xfreerdp"                    --> doShift (myWorkspaces !! 2)
-   , (isFullscreen                              --> doFullFloat)
+   , isFullscreen                               --> doFullFloat
    ]
+
+--myEventHook :: Event -> X All
+--myEventHook = refocusLastWhen myPred
+--    where
+--        myPred = refocusingIsActive <||> isFloat
+
+   
+--toggleableFullscreen :: IORef Bool -> Event -> X All
+--toggleableFullscreen ref evt =
+--    io (readIORef ref) >>= \isOn ->
+--        if isOn
+--            then XMonad.Hooks.EwmhDesktops.fullscreenEventHook evt
+--            else return (All True)
 
 main :: IO ()
 main = do
+--  fullscreenRef <- newIORef True
   xmproc <- spawnPipe "/usr/bin/xmobar"
-  xmonad  $ docks $ ewmh $ xfceConfig {
-     terminal           = myTerminal,
-     focusFollowsMouse  = myFocusFollowsMouse,
-     clickJustFocuses   = myClickJustFocuses,
-     modMask            = myModMask,
-     workspaces         = myWorkspaces,
-     borderWidth        = myBorderWidth,
-     normalBorderColor  = myNormColor,
-     focusedBorderColor = myFocusedColor,
-     keys               = myKeys,
-     mouseBindings      = myMouseBindings,
-     layoutHook         = myLayoutHook,
-     handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook, 
-     manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> xPropManageHook xPropMatches, 
-     startupHook        = myStartupHook,
-     logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
+  xmonad  $ docks  $ ewmhFullscreen . ewmh $ xfceConfig {
+       terminal           = myTerminal
+     , focusFollowsMouse  = myFocusFollowsMouse
+     , clickJustFocuses   = myClickJustFocuses
+     , modMask            = myModMask
+     , workspaces         = myWorkspaces
+     , borderWidth        = myBorderWidth
+     , normalBorderColor  = myNormColor
+     , focusedBorderColor = myFocusedColor
+     , keys               = myKeys
+     , mouseBindings      = myMouseBindings
+     , layoutHook         = showWName' myShowWNameTheme $ myLayoutHook 
+     --, handleEventHook    = fullscreenEventHook
+     , handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook 
+     , manageHook         = myManageHook <+> manageDocks <+> manageSpawn
+      --manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> fullscreenManageHook <+> xPropManageHook xPropMatches
+     , startupHook        = myStartupHook
+     , logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
        { ppOutput = hPutStrLn  xmproc
        , ppCurrent = xmobarColor "#59D5E0" "" . wrap 
                  ("<box type=Bottom width=2 mb=1 color=#06D001>") "</box>" . clickable      -- Current workspace in xmobar
