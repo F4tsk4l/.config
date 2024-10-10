@@ -25,9 +25,10 @@ Config {
 
      , commands =
         [
-          Run DynNetwork     [ "--template" , ":  <tx> kB/s : <rx> kB/s"
+          Run DynNetwork     [ "--template" , ": <tx> : <rx>"
+                             , "--suffix"   , "True"
                              , "--Low"      , "1000"       -- units: B/s
-                             , "--High"     , "5000"       -- units: B/s
+                             , "--High"     , "100000"       -- units: B/s
                              , "--low"      , "#F8F8F8"
                              , "--normal"   , "#F8F8F8"
                              , "--high"     , "#2ECC71"
@@ -39,7 +40,7 @@ Config {
                              , "--normal"   , "#F8F8F8"
                              , "--high"     , "#FF000D"
                              ] 10
-        , Run CoreTemp       [ "--template" , "<fc=#FF000D><fn=1>\xf2c8</fn></fc> : <core0>°C"
+        , Run CoreTemp       [ "--template" , "<fc=#FF000D><fn=1>\xf2c8</fn></fc> : <core0> °C"
                              , "--Low"      , "70"        -- units: °C
                              , "--High"     , "80"        -- units: °C
                              , "--low"      , "#F8F8F8"
@@ -79,12 +80,14 @@ Config {
                              , "--high"     , "#FF000D"
                              ] 10
         , Run DiskU [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
-        , Run UnsafeStdinReader
+        --, Run MPD ["-t", "<state>: <artist> - <track>"] 5
+        , Run MPD ["-t", "<state>: <artist> - <title>"] 5
         , Run Com "/home/g4m3r/.local/bin/connection" [] "mycon"  5
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
         , Run Com "/home/g4m3r/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
+        , Run UnsafeStdinReader
        ]
     , sepChar =  "%"   -- delineator between plugin names and straight text
     , alignSep = "}{"  -- separator between left-right alignment
-    , template = "%UnsafeStdinReader% }{ <box type=Bottom width=2 mb=1 color=#E7D4B5>%date%</box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %swap% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %memory% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> <fc=#FF8080>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5>  %battery% </box> %trayerpad%"
+    , template = "%UnsafeStdinReader% }{<box type=Bottom width=2 mb=1 color=#E7D4B5>%mpd%</box>   <box type=Bottom width=2 mb=1 color=#E7D4B5>%date%</box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %swap% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %memory% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> <fc=#FF8080>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5>  %battery% </box> %trayerpad%"
 }
