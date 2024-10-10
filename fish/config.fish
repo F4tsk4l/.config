@@ -53,3 +53,8 @@ export EDITOR="$VISUAL"
 export BAT_THEME="TwoDark"
 export BAT_STYLE="full"
 
+# Solarized Dark & Green highlight
+set -g man_blink -o red
+set -g man_bold -o blue
+set -g man_standout -b black red
+set -g man_underline -u 93a1a1
