@@ -19,12 +19,12 @@ import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Cursor
 
 -- Action
+import XMonad.Actions.ToggleFullFloat
 import XMonad.Actions.TagWindows
 import XMonad.Actions.MouseResize
 import XMonad.Actions.WorkspaceNames
 import XMonad.Actions.SpawnOn
 import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen)
-import XMonad.Actions.ToggleFullFloat
 
 -- Layouts
 import XMonad.Layout.Accordion
@@ -34,10 +34,13 @@ import XMonad.Layout.Spiral
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Tabbed
 import XMonad.Layout.ThreeColumns
+import XMonad.Layout.Reflect (reflectHoriz)
 
 -- Layouts modifiers
+import XMonad.Layout.Fullscreen
 import XMonad.Layout.LayoutHints
 import XMonad.Layout.Gaps
+import XMonad.Layout.MultiToggle
 import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS, FULL))
 import XMonad.Layout.PerWorkspace
 import XMonad.Layout.Renamed
@@ -67,8 +70,11 @@ import Data.Tree
 import qualified Data.Map as M
 
 -- Hooks
-import XMonad.Hooks.SetWMName
 import XMonad.Hooks.EwmhDesktops 
+import XMonad.Hooks.Focus
+import XMonad.Hooks.UrgencyHook
+import XMonad.Hooks.Focus
+import XMonad.Hooks.SetWMName
 import XMonad.Hooks.Place
 import XMonad.Hooks.XPropManage
 import XMonad.Hooks.ManageDocks
@@ -82,7 +88,7 @@ import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(.
 ----------------------------------------------------------
 -- MyTerminal
 myTerminal :: String
-myTerminal = "alacritty"
+myTerminal = "kitty"
 
 myFont :: String
 myFont = "xft:Font Mono:regular:size=9:antialias=true:hinting=true"
@@ -176,10 +182,10 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
     -- MY KEYBINDINGS
-    -- StartViper 
-    , ((modm .|. shiftMask, xK_v), spawn "viper start; viper-gui -i")
-    -- StopViper 
-    , ((modm .|. mod1Mask, xK_v), spawn "viper stop; killall viper-gui")
+    -- Jamesdsp start 
+    , ((modm .|. shiftMask, xK_v), spawn "jamesdsp -t")
+    -- Jamesdsp stop 
+    --, ((modm .|. mod1Mask, xK_v), spawn "killall jamesdsp")
     -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
     , ((modm, xK_n), spawnHere "nemo")
     , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
@@ -190,8 +196,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Browsers
     , ((modm .|. shiftMask, xK_f), spawnHere "firefox")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
-    , ((modm .|. shiftMask, xK_t), spawnHere "thunderbird")
     , ((modm .|. controlMask, xK_l), spawnHere "librewolf")
+    -- ScratchPads
+    , ((modm .|. shiftMask, xK_s), withFocused $ toggleDynamicNSP "dny1")
+    , ((modm, xK_s), dynamicNSPAction "dny1")
+    , ((modm .|. shiftMask, xK_t), namedScratchpadAction myScratchPads "thunderbird")
     -- Screenshot
     -- Flameshot 
     -- ((0 .|. mod1Mask, xK_Print), spawn "flameshot full -p $HOME/Pictures/Flameshts/Full/")
@@ -203,9 +212,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((0 .|. controlMask, xK_Print), spawn "maim -i $(xdotool getactivewindow) -B $HOME/Pictures/Maimshts/ActiveW/$(date +%s).png")
     -- Morc menu
     , ((modm, xK_z), spawn "morc_menu")
-    -- ScratchPads
-    , ((modm .|. shiftMask, xK_s), withFocused $ toggleDynamicNSP "dny1")
-    , ((modm, xK_s), dynamicNSPAction "dny1")
     -- Pavucontrol
     , ((modm .|. controlMask, xK_m), spawn "pavucontrol")
    ]++
@@ -230,16 +236,21 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
+-- NOTE: Toggle full testing
+toggleFull = withFocused (\windowId -> do
+    { floats <- gets (W.floating . windowset);
+        if windowId `M.member` floats
+        then withFocused $ windows . W.sink
+        else withFocused $ windows . (flip W.float $ W.RationalRect 0 0 1 1) })  
 
  --My spacing; n sets the gap size around the windows.
 ------------------------------------------------------
 tall     = renamed [Replace "tall"]
            $ limitWindows 5
-           $ smartBorders
+           $ mySpacing 2
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
-           $ mySpacing 2
+           $ subLayout [] (Simplest)
            $ ResizableTall 1 (3/100) (1/2) []
 monocle  = renamed [Replace "monocle"]
            $ smartBorders
@@ -247,9 +258,9 @@ monocle  = renamed [Replace "monocle"]
            $ addTabs shrinkText myTabTheme
            $ subLayout [] (smartBorders Simplest)
            $ Full
-floats   = renamed [Replace "floats"]
-           $ smartBorders
-           $ simplestFloat
+--floats   = renamed [Replace "floats"]
+--           $ smartBorders
+--           $ simplestFloat
 --grid     = renamed [Replace "grid"]
 --           $ limitWindows 9
 --           $ smartBorders
@@ -281,9 +292,7 @@ floats   = renamed [Replace "floats"]
 --           $ addTabs shrinkText myTabTheme
 --           $ subLayout [] (smartBorders Simplest)
 --           -- Mirror takes a layout and rotates it by 90 degrees.
---           -- So we are applying Mirror to the ThreeCol layout.
---           $ Mirror
---           $ ThreeCol 1 (3/100) (1/2)
+--           -- So we are applying Mirror to the ThreeCol layout. $ Mirror $ ThreeCol 1 (3/100) (1/2)
 tabs     = renamed [Replace "tabs"]
            -- I cannot add spacing to this layout because it will
            -- add spacing between window and tabs which looks bad.
@@ -313,26 +322,68 @@ myShowWNameTheme = def
  
 
 -- Layouts:
-myLayoutHook = lessBorders OnlyFloat $ avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts floats $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
+-- OtherIndicated
+-- OnlyScreenFloat
+-- OnlyLayoutFloatBelow
+-- lessBorders OnlyFloat
+myLayoutHook = lessBorders OnlyScreenFloat $ avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
+--myLayoutHook = lessBorders OnlyScreenFloat $ avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
+--myLayoutHook = avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
   where
-    myDefaultLayout = withBorder myBorderWidth tall
+    myDefaultLayout = tall
                    ||| noBorders monocle
                    ||| tabs
-                   ||| floats
+--                 ||| floats
 --                 ||| grid
 --                 ||| spirals
 --                 ||| threeCol
 --                 ||| threeRow
 --                 ||| tallAccordion
 --                 ||| wideAccordion
+--myLayoutHook  = avoidStruts (withBorder 2 tiled ||| Mirror tiled ||| Full)
+--    where
+--        tiled   = lessBorders OnlyFloat (Tall nmaster delta ratio)
+--        nmaster = 1      -- Default number of windows in the master pane
+--        ratio   = 1/2    -- Default proportion of screen occupied by master pane
+--        delta   = 3/100  --
 
---myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ??NOBORDERS ?? FULL ?? EOT) (
---                                  withBorder myBorderWidth  tall 
---                                  ||| monocle 
---                                  ||| noBorders tabs 
---                                  ||| noBorders Full 
---                                  )
+-- SCRATCHPADS
+myScratchPads :: [NamedScratchpad]
+myScratchPads = [ 
+                  NS "thunderbird" spawnMail findMail manageMail
+                --  NS "thunderbird" "thunderbird" (className =? "thunderbird") defaultFloating 
+                --, NS "mocp" spawnMocp findMocp manageMocp
+                --, NS "calculator" spawnCalc findCalc manageCalc
+                ]
                                   
+  where
+--    spawnTerm  = myTerminal ++ " -t scratchpad"
+--    findTerm   = title =? "scratchpad"
+--    manageTerm = customFloating $ W.RationalRect l t w h
+--               where
+--                 h = 0.9
+--                 w = 0.9
+--                 t = 0.95 -h
+--                 l = 0.95 -w
+--    spawnMocp  = myTerminal ++ " -t mocp -e mocp"
+--    findMocp   = title =? "mocp"
+--    manageMocp = customFloating $ W.RationalRect l t w h
+--               where
+--                 h = 0.9
+--                 w = 0.9
+--                 t = 0.95 -h
+--                 l = 0.95 -w
+    spawnMail  = "thunderbird"
+    findMail   = className =? "thunderbird"
+    manageMail = nonFloating
+--    manageCalc = customFloating $ W.RationalRect l t w h
+--               where
+--                 h = 0.5
+--                 w = 0.4
+--                 t = 0.75 -h
+--                 l = 0.70 -w
+
+
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
 mySpacing :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
 mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
@@ -344,15 +395,19 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 -- MyStartup Hooks
 myStartupHook :: X ()
 myStartupHook = do
-   spawnOnce "xfce4-power-manager --daemon"
-   spawnOnce "nitrogen --restore"
-   spawnOnce "pulseaudio --start"
-   spawnOnce "picom"
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
    spawnOnce "start_conky_maia"
-   spawnOnce "volumeicon"
    setWMName "LG3D"
-   spawnOnce "cmst -m"
+   --spawnOnce "cmst -m"
+   --spawnOnce "mpd"
+   --spawnOnce "/usr/bin/jamesdsp -t"
+   --setWMName "xmonad"
+   --spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
+   --spawnOnce "volumeicon"
+   --spawnOnce "xfce4-power-manager --daemon"
+   --spawnOnce "nitrogen --restore"
+   --spawnOnce "pulseaudio --start"
+   --spawnOnce "picom"
    --spawnOnce "/usr/bin/deadd-notification-center"
    --spawnOnce "xfce4-notifyd"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
@@ -375,6 +430,11 @@ myManageHook = composeAll
    , title     =? "Text search"                 --> doCenterFloat
    , title     =? "Choose an icon"              --> doCenterFloat
    , title     =? "Navigator"                   --> doCenterFloat
+   , resource  =? "libreoffice-writer"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
+   , appName   =? "libreoffice-writer"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
+   , title     =? "libreoffice-writer"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
+   , className =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4) 
+   , appName   =? "libreoffice"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , appName   =? "cmst"                        --> doCenterFloat
    , appName   =? "Msgcompose"                  --> doCenterFloat
    , appName   =? "file_properties"             --> doCenterFloat
@@ -385,14 +445,15 @@ myManageHook = composeAll
    --, title     =? "MavisBeacon.exe - Wine desktop"  --> doCenterFloat
    --, title     =? "MavisBeacon.exe *"               --> doCenterFloat
    --, className =? "Explorer.exe"                --> doCenterFloat
-   , className =? "winecfg.exe"                 --> doCenterFloat
+   --, className =? "winecfg.exe"                 --> doCenterFloat
    , className =? "trayer"                      --> doIgnore
    , className =? "Xfce4-notifyd"               --> doIgnore
    , className =? "deadd-notification-center"   --> doIgnore
    , className =? "Nitrogen"                    --> doCenterFloat
    , className =? "PacketTracer"                --> doCenterFloat
    , className =? "Browser"                     --> doCenterFloat
-   , className =? "qbittorrent"                 --> doCenterFloat
+   , className =? "qBittorrent"                 --> doCenterFloat
+   , className =? "cmst"                        --> doCenterFloat
    , className =? "pavucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
    , className =? "Xdm-app"                     --> doCenterFloat
@@ -405,8 +466,9 @@ myManageHook = composeAll
    , className =? "TIPP10"                      --> doCenterFloat
    , className =? "Gimp"                        --> doFullFloat <+> doShift (myWorkspaces !! 4) 
    , className =? "Gimp-2.10"                   --> doFullFloat <+> doShift (myWorkspaces !! 4) 
-   , className =? "libreoffice-startcenter"     --> doShift (myWorkspaces !! 4) 
-   , className =? "libreoffice-writer"          --> doShift (myWorkspaces !! 4) 
+   --, className =? "libreoffice"                 --> doFullFloat <+> doShift (myWorkspaces !! 4) 
+   --, className =? "libreoffice"                 --> doShift (myWorkspaces !! 4) 
+   --, className =? "libreoffice-writer"          --> doShift (myWorkspaces !! 4) 
    , className =? "VirtualBoxVM"                --> doShift (myWorkspaces !! 4) 
    , className =? "Inkscape"                    --> doShift (myWorkspaces !! 4) 
    , className =? "whatsdesk"                   --> doShift (myWorkspaces !! 2) 
@@ -414,27 +476,16 @@ myManageHook = composeAll
    , className =? "VirtualBox Manager"          --> doShift (myWorkspaces !! 3) 
    , className =? "obsidian"                    --> doShift (myWorkspaces !! 2)
    , className =? "xfreerdp"                    --> doShift (myWorkspaces !! 2)
-   , isFullscreen                               --> doFullFloat
+   , isFullscreen                               --> (doFullFloat)
+   --, isFullscreen                                --> (doF W.focusDown <+> doFullFloat)
    ]
-
---myEventHook :: Event -> X All
---myEventHook = refocusLastWhen myPred
---    where
---        myPred = refocusingIsActive <||> isFloat
-
-   
---toggleableFullscreen :: IORef Bool -> Event -> X All
---toggleableFullscreen ref evt =
---    io (readIORef ref) >>= \isOn ->
---        if isOn
---            then XMonad.Hooks.EwmhDesktops.fullscreenEventHook evt
---            else return (All True)
 
 main :: IO ()
 main = do
 --  fullscreenRef <- newIORef True
   xmproc <- spawnPipe "/usr/bin/xmobar"
-  xmonad  $ docks  $ ewmhFullscreen . ewmh $ xfceConfig {
+  --xmonad  $ docks $ fullscreenSupportBorder $ xfceConfig {
+  xmonad  $ docks $ ewmhFullscreen . ewmh $ xfceConfig {
        terminal           = myTerminal
      , focusFollowsMouse  = myFocusFollowsMouse
      , clickJustFocuses   = myClickJustFocuses
@@ -447,8 +498,9 @@ main = do
      , mouseBindings      = myMouseBindings
      , layoutHook         = showWName' myShowWNameTheme $ myLayoutHook 
      --, handleEventHook    = fullscreenEventHook
-     , handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook 
-     , manageHook         = myManageHook <+> manageDocks <+> manageSpawn
+     , handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook
+     , manageHook         =  ewmhDesktopsManageHook <+> myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
+     --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook xfceConfig <+> namedScratchpadManageHook myScratchPads
       --manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> fullscreenManageHook <+> xPropManageHook xPropMatches
      , startupHook        = myStartupHook
      , logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
