@@ -1,0 +1,2 @@
+## My fish setup
+Fisher *[github](https://github.com/jorgebucaran/fisher)*.
