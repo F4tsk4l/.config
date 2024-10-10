@@ -21,6 +21,7 @@ if status is-interactive
 end
 
 set -g PATH "$HOME/.local/bin:$PATH"
+set -g ANDROID_SDK_PATH "/opt/android-sdk/"
 set fish_greeting ""
 
 function st_docker
@@ -38,6 +39,8 @@ alias cat "bat"
 alias rmr "rm -rf"
 alias cls "clear"
 alias yayi "yay -S --cleanafter"
+alias rename "perl-rename"
+alias ncmp "ncmpcpp"
 #alias vim "nvim"
 
 #Set whoami variable
