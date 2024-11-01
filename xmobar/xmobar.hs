@@ -1,12 +1,11 @@
 Config {
    -- Appearance
-         font            = "Joist Bold Italic 8"
-       , additionalFonts = [ "symbols nerd font 10"
-                            , "Mononoki Nerd Font 20"
-       
-                           ]
-     --, borderColor = "black"
-     --, border = TopB
+       font            = "Joist Bold Italic 8"
+     , additionalFonts = [ "symbols nerd font 10"
+                          , "Mononoki Nerd Font 20"
+                         ]
+     , borderColor = "black"
+     , border = TopB
      , bgColor = "black"
      , iconRoot = "/home/g4m3r/.xmonad/xpm/"  -- default: "."
      , fgColor = "#F8F8F8"
@@ -17,9 +16,9 @@ Config {
      --, position = Static {xpos = 0, ypos = 0, width = 1298, height = 17}
      , allDesktops = True
      , overrideRedirect = True
-     , lowerOnStart = True-- send to bottom of window stack on start
+     , lowerOnStart = True    -- send to bottom of window stack on start
      , hideOnStart =  False   -- start with window unmapped (hidden)
-   -- overrideRedirect = True    -- set the Override Redirect flag (Xlib)
+   -- overrideRedirect = True -- set the Override Redirect flag (Xlib)
      , pickBroadest = False   -- choose widest display (multi-monitor)
      , persistent = True -- enable/disable hiding (True = disabled)
 
@@ -68,9 +67,7 @@ Config {
                                        -- charged status
                                        , "-i"	, "<fc=#59D5E0><fn=1>\xf0079</fn></fc>  <left>%"
                              ] 50
-        --, Run Date           "<fn=1>\xf00ed</fn> %F  | %a  <fn=1>\xe641</fn>  %T" "date" 10
         , Run Date           "<fc=#F8F8F8><fn=1>\xf00ed</fn>  %F</fc> <fc=#BC5A94>  %A </fc> <fc=#F8F8F8><fn=1>\xe641</fn>  %H:%M </fc>" "date" 10
-        -- Keyboard layout indicator
         -- Run Kbd            [ ("us"  , "<fc=#FF000D>US")]
         , Run Swap           [ "--template" ,"<fc=#03AED2><fn=1>\xf0fb4</fn></fc> : <used> MB"
                              , "--Low"      , "500"        -- units: %
@@ -79,12 +76,12 @@ Config {
                              , "--normal"   , "#F8F8F8"
                              , "--high"     , "#FF000D"
                              ] 10
-        , Run DiskU [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
-        --, Run MPD ["-t", "<state>: <artist> - <track>"] 5
-        , Run MPD ["-t", "<state>: <artist> - <title>"] 5
-        , Run Com "/home/g4m3r/.local/bin/connection" [] "mycon"  5
+        , Run DiskU         [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
+        , Run MPD           [ "-t", "<state>:<artist>-<title>"
+                              ,"-M", "35"]5
+        , Run Com           "/home/g4m3r/.local/bin/connection" [] "mycon"  5
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
-        , Run Com "/home/g4m3r/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
+        , Run Com           "/home/g4m3r/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
         , Run UnsafeStdinReader
        ]
     , sepChar =  "%"   -- delineator between plugin names and straight text
