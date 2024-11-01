@@ -73,7 +73,6 @@ import qualified Data.Map as M
 import XMonad.Hooks.EwmhDesktops 
 import XMonad.Hooks.Focus
 import XMonad.Hooks.UrgencyHook
-import XMonad.Hooks.Focus
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.Place
 import XMonad.Hooks.XPropManage
@@ -117,7 +116,7 @@ myFocusFollowsMouse = True
 
 -- Whether clicking on a window to focus also passes the click to the window
 myClickJustFocuses :: Bool
-myClickJustFocuses = False
+myClickJustFocuses = True
 
 -- ModKey
 myModMask :: KeyMask
@@ -140,6 +139,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     [ ((modm .|. shiftMask, xK_Return), spawnHere $ XMonad.terminal conf)
     -- launch dmenu
     , ((modm, xK_d), spawn "dmenu_run")
+    -- launch lockscreen
+    , ((modm .|. shiftMask, xK_l), spawn "xfce4-screensaver-command -l")
     -- launch gmrun
     --, ((modm .|. shiftMask, xK_p), spawn "gmrun")
     -- close focused window
@@ -396,20 +397,25 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
-   spawnOnce "start_conky_maia"
    setWMName "LG3D"
-   --spawnOnce "cmst -m"
-   --spawnOnce "mpd"
-   --spawnOnce "/usr/bin/jamesdsp -t"
-   --setWMName "xmonad"
-   --spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
-   --spawnOnce "volumeicon"
-   --spawnOnce "xfce4-power-manager --daemon"
-   --spawnOnce "nitrogen --restore"
-   --spawnOnce "pulseaudio --start"
-   --spawnOnce "picom"
-   --spawnOnce "/usr/bin/deadd-notification-center"
+   spawnOnce "nitrogen --restore"
+   spawnOnce "start_conky_maia"
+   spawnOnce "nm-applet"
+   spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
+   spawnOnce "mpd"
+   spawnOnce "volumeicon"
+   spawnOnce "Pipewire"
+   spawnOnce "xfce4-power-manager --daemon"
+   spawnOnce "light-locker"
+   spawnOnce "picom"
+   spawnOnce "/usr/bin/deadd-notification-center"
+   spawnOnce "/usr/bin/jamesdsp -t"
+   spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
+   spawnOnce "xfce4-screensaver"
    --spawnOnce "xfce4-notifyd"
+   --spawnOnce "cmst -m"
+   --setWMName "xmonad"
+   --spawnOnce "pulseaudio --start"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
 
 
@@ -436,6 +442,7 @@ myManageHook = composeAll
    , className =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4) 
    , appName   =? "libreoffice"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , appName   =? "cmst"                        --> doCenterFloat
+   , title     =? "MavisBeacon.exe - Wine Desktop"  --> doCenterFloat
    , appName   =? "Msgcompose"                  --> doCenterFloat
    , appName   =? "file_properties"             --> doCenterFloat
    , appName   =? "Calendar"                    --> doCenterFloat
