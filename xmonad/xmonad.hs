@@ -17,6 +17,7 @@ import XMonad.Util.Run(spawnPipe)
 import XMonad.Util.SpawnOnce
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Cursor
+import qualified XMonad.Util.Hacks as Hacks
 
 -- Action
 import XMonad.Actions.ToggleFullFloat
@@ -327,9 +328,9 @@ myShowWNameTheme = def
 -- OnlyScreenFloat
 -- OnlyLayoutFloatBelow
 -- lessBorders OnlyFloat
-myLayoutHook = lessBorders OnlyScreenFloat $ avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
 --myLayoutHook = lessBorders OnlyScreenFloat $ avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
 --myLayoutHook = avoidStruts $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
+myLayoutHook = lessBorders OnlyScreenFloat $ avoidStruts $ mouseResize $ windowArrange $ mkToggle (NBFULL ?? MIRROR ?? NOBORDERS ?? FULL ?? EOT) myDefaultLayout
   where
     myDefaultLayout = tall
                    ||| noBorders monocle
@@ -505,9 +506,9 @@ main = do
      , mouseBindings      = myMouseBindings
      , layoutHook         = showWName' myShowWNameTheme $ myLayoutHook 
      --, handleEventHook    = fullscreenEventHook
-     , handleEventHook    = windowedFullscreenFixEventHook <+> trayerPaddingXmobarEventHook
-     , manageHook         =  ewmhDesktopsManageHook <+> myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
-     --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook xfceConfig <+> namedScratchpadManageHook myScratchPads
+     , handleEventHook    = handleEventHook def <+> Hacks.windowedFullscreenFixEventHook<+> Hacks.trayerAboveXmobarEventHook <+> trayerPaddingXmobarEventHook
+     --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
+     , manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook xfceConfig <+> namedScratchpadManageHook myScratchPads
       --manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> fullscreenManageHook <+> xPropManageHook xPropMatches
      , startupHook        = myStartupHook
      , logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
