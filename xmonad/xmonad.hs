@@ -2,7 +2,8 @@
 import XMonad
 import XMonad.Prelude
 import XMonad.Config.Desktop
-import XMonad.Config.Xfce
+--import XMonad.Config.Xfce
+--import XMonad.Config.Mate
 import System.Directory
 import System.IO
 import System.Exit
@@ -71,6 +72,7 @@ import Data.Tree
 import qualified Data.Map as M
 
 -- Hooks
+import XMonad.Hooks.RefocusLast (refocusLastLogHook)
 import XMonad.Hooks.EwmhDesktops 
 import XMonad.Hooks.Focus
 import XMonad.Hooks.UrgencyHook
@@ -138,10 +140,12 @@ clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
 myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch a terminal
     [ ((modm .|. shiftMask, xK_Return), spawnHere $ XMonad.terminal conf)
+    -- Reset NSP
+    --, ((modm, xK_Return), windows W.swapMaster >> resetFocusedNSP)
     -- launch dmenu
     , ((modm, xK_d), spawn "dmenu_run")
     -- launch lockscreen
-    , ((modm .|. shiftMask, xK_l), spawn "xfce4-screensaver-command -l")
+    , ((modm .|. shiftMask, xK_l), spawn "i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state")
     -- launch gmrun
     --, ((modm .|. shiftMask, xK_p), spawn "gmrun")
     -- close focused window
@@ -180,7 +184,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
    ----------------------------------
     -- Quit xmonad
     --, ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
-    , ((modm .|. shiftMask, xK_c), spawn "xfce4-session-logout")
+    , ((modm .|. shiftMask, xK_c), spawn "mate-session-save --logout-dialog")
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
     -- MY KEYBINDINGS
@@ -202,7 +206,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- ScratchPads
     , ((modm .|. shiftMask, xK_s), withFocused $ toggleDynamicNSP "dny1")
     , ((modm, xK_s), dynamicNSPAction "dny1")
-    , ((modm .|. shiftMask, xK_t), namedScratchpadAction myScratchPads "thunderbird")
+    , ((modm .|. shiftMask, xK_t), spawnHereNamedScratchpadAction myScratchPads "thunderbird")
     -- Screenshot
     -- Flameshot 
     -- ((0 .|. mod1Mask, xK_Print), spawn "flameshot full -p $HOME/Pictures/Flameshts/Full/")
@@ -353,12 +357,19 @@ myLayoutHook = lessBorders OnlyScreenFloat $ avoidStruts $ mouseResize $ windowA
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ 
                   NS "thunderbird" spawnMail findMail manageMail
-                --  NS "thunderbird" "thunderbird" (className =? "thunderbird") defaultFloating 
                 --, NS "mocp" spawnMocp findMocp manageMocp
                 --, NS "calculator" spawnCalc findCalc manageCalc
                 ]
                                   
   where
+    spawnMail  = "thunderbird" ++ " -t scratchpad"
+    findMail   = className =? "thunderbird"
+    manageMail = customFloating $ W.RationalRect l t w h
+               where
+                 h = 0.9
+                 w = 0.9
+                 t = 0.95 -h
+                 l = 0.95 -w
 --    spawnTerm  = myTerminal ++ " -t scratchpad"
 --    findTerm   = title =? "scratchpad"
 --    manageTerm = customFloating $ W.RationalRect l t w h
@@ -375,15 +386,6 @@ myScratchPads = [
 --                 w = 0.9
 --                 t = 0.95 -h
 --                 l = 0.95 -w
-    spawnMail  = "thunderbird"
-    findMail   = className =? "thunderbird"
-    manageMail = nonFloating
---    manageCalc = customFloating $ W.RationalRect l t w h
---               where
---                 h = 0.5
---                 w = 0.4
---                 t = 0.75 -h
---                 l = 0.70 -w
 
 
 --Makes setting the spacingRaw simpler to write. The spacingRaw module adds a configurable amount of space around windows.
@@ -406,17 +408,14 @@ myStartupHook = do
    spawnOnce "mpd"
    spawnOnce "volumeicon"
    spawnOnce "Pipewire"
-   spawnOnce "xfce4-power-manager --daemon"
-   spawnOnce "light-locker"
    spawnOnce "picom"
    spawnOnce "/usr/bin/deadd-notification-center"
-   spawnOnce "/usr/bin/jamesdsp -t"
-   spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
-   spawnOnce "xfce4-screensaver"
-   --spawnOnce "xfce4-notifyd"
-   --spawnOnce "cmst -m"
+   --spawnOnce "/usr/bin/jamesdsp -t"
+   --spawnOnce "xautolock -time 30 -locker 'i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state' -detectsleep -killtime 60 -killer 'mate-session-save --logout'"
+   --spawnOnce "mate-power-manager"
+   --spawnOnce "/usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
+   --spawnOnce "mate-session"
    --setWMName "xmonad"
-   --spawnOnce "pulseaudio --start"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
 
 
@@ -493,7 +492,7 @@ main = do
 --  fullscreenRef <- newIORef True
   xmproc <- spawnPipe "/usr/bin/xmobar"
   --xmonad  $ docks $ fullscreenSupportBorder $ xfceConfig {
-  xmonad  $ docks $ ewmhFullscreen . ewmh $ xfceConfig {
+  xmonad  $ docks $ ewmhFullscreen . ewmh $ desktopConfig {
        terminal           = myTerminal
      , focusFollowsMouse  = myFocusFollowsMouse
      , clickJustFocuses   = myClickJustFocuses
@@ -508,10 +507,11 @@ main = do
      --, handleEventHook    = fullscreenEventHook
      , handleEventHook    = handleEventHook def <+> Hacks.windowedFullscreenFixEventHook<+> Hacks.trayerAboveXmobarEventHook <+> trayerPaddingXmobarEventHook
      --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
-     , manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook xfceConfig <+> namedScratchpadManageHook myScratchPads
+     --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook mateConfig <+> namedScratchpadManageHook myScratchPads
+     , manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
       --manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> fullscreenManageHook <+> xPropManageHook xPropMatches
      , startupHook        = myStartupHook
-     , logHook = dynamicLogWithPP $  filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP                            -- Status bars and Logging
+     , logHook = dynamicLogWithPP $ filterOutWsPP [scratchpadWorkspaceTag] $ xmobarPP -- Status bars and Logging
        { ppOutput = hPutStrLn  xmproc
        , ppCurrent = xmobarColor "#59D5E0" "" . wrap 
                  ("<box type=Bottom width=2 mb=1 color=#06D001>") "</box>" . clickable      -- Current workspace in xmobar
@@ -526,5 +526,5 @@ main = do
        , ppExtras  = [windowCount]                                                                              --  of windows current workspace
        -- ppOrder = \(ws:l:t:_) -> [ws]
        , ppOrder = \(ws:l:t:ex) -> [ws,l]++ex++[t]
-       }
+       } 
 }
