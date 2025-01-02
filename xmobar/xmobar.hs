@@ -77,7 +77,7 @@ Config {
                              , "--high"     , "#FF000D"
                              ] 10
         , Run DiskU         [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
-        , Run MPD           [ "-t", "<state>:<artist>-<title>"
+        , Run MPD           [ "-t", "<state>: <artist> - <title> "
                               ,"-M", "35"]5
         , Run Com           "/home/g4m3r/.local/bin/connection" [] "mycon"  5
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
