@@ -59,6 +59,10 @@ def_key "d"
   clear_playlist
 def_key "space"
   pause 
+def_key "h"
+  volume_up
+def_key "l"
+  volume_down
 #def_key "space"
 #  toggle_visualization_type
 #def_key "space"
@@ -69,14 +73,12 @@ def_key "d"
 #  delete_browser_items
 #def_key "d"
 #  delete_stored_playlist
+def_key "l"
+  show_lyrics
 def_key "right"
   next_column
 def_key "right"
   slave_screen
-def_key "h"
-  volume_up
-def_key "l"
-  volume_down
 def_key "left"
   previous_column
 def_key "left"
@@ -207,8 +209,6 @@ def_key "I"
   show_artist_info
 def_key "g"
   jump_to_position_in_song
-def_key "l"
-  show_lyrics
 def_key "ctrl-v"
   select_range
 def_key "B"
