@@ -145,7 +145,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- launch dmenu
     , ((modm, xK_d), spawn "dmenu_run")
     -- launch lockscreen
-    , ((modm .|. shiftMask, xK_l), spawn "i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state")
+    , ((modm .|. controlMask, xK_l), spawn "i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state")
     -- launch gmrun
     --, ((modm .|. shiftMask, xK_p), spawn "gmrun")
     -- close focused window
@@ -194,7 +194,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     --, ((modm .|. mod1Mask, xK_v), spawn "killall jamesdsp")
     -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
     , ((modm, xK_n), spawnHere "nemo")
-    , ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
+    --, ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
     , ((modm , xK_p), spawn "deadd") 
     --, ((modm, xK_f), withFocused toggleFullFloat)
     -- Fullscreen Toggle
@@ -202,7 +202,8 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Browsers
     , ((modm .|. shiftMask, xK_f), spawnHere "firefox")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
-    , ((modm .|. controlMask, xK_l), spawnHere "librewolf")
+    , ((modm .|. controlMask, xK_b), spawnHere "brave --incognito")
+    , ((modm .|. shiftMask, xK_l), spawnHere "librewolf")
     -- ScratchPads
     , ((modm .|. shiftMask, xK_s), withFocused $ toggleDynamicNSP "dny1")
     , ((modm, xK_s), dynamicNSPAction "dny1")
@@ -407,10 +408,11 @@ myStartupHook = do
    spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
    spawnOnce "mpd"
    spawnOnce "volumeicon"
+   spawnOnce "qbittorrent"
    spawnOnce "Pipewire"
    spawnOnce "picom"
    spawnOnce "/usr/bin/deadd-notification-center"
-   --spawnOnce "/usr/bin/jamesdsp -t"
+   spawnOnce "/usr/bin/jamesdsp -t"
    --spawnOnce "xautolock -time 30 -locker 'i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state' -detectsleep -killtime 60 -killer 'mate-session-save --logout'"
    --spawnOnce "mate-power-manager"
    --spawnOnce "/usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
@@ -436,11 +438,11 @@ myManageHook = composeAll
    , title     =? "Text search"                 --> doCenterFloat
    , title     =? "Choose an icon"              --> doCenterFloat
    , title     =? "Navigator"                   --> doCenterFloat
-   , resource  =? "libreoffice-writer"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
-   , appName   =? "libreoffice-writer"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
-   , title     =? "libreoffice-writer"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
-   , className =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4) 
-   , appName   =? "libreoffice"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
+   , resource  =? "libreoffice-writer"          --> doCenterFloat <+> doShift (myWorkspaces !! 4)
+   , appName   =? "libreoffice-writer"          --> doCenterFloat <+> doShift (myWorkspaces !! 4)
+   , title     =? "libreoffice-writer"          --> doCenterFloat <+> doShift (myWorkspaces !! 4)
+   , className =? "libreoffice-writer"          --> doCenterFloat <+> doShift (myWorkspaces !! 4) 
+   , appName   =? "libreoffice"                 --> doCenterFloat <+> doShift (myWorkspaces !! 4)
    , appName   =? "cmst"                        --> doCenterFloat
    , title     =? "MavisBeacon.exe - Wine Desktop"  --> doCenterFloat
    , appName   =? "Msgcompose"                  --> doCenterFloat
@@ -469,15 +471,16 @@ myManageHook = composeAll
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat
    , className =? "viper-gui"                   --> doCenterFloat
+   , className =? "Blueman-manager"             --> doCenterFloat
    , className =? "Soffice"                     --> doCenterFloat
    , className =? "TIPP10"                      --> doCenterFloat
-   , className =? "Gimp"                        --> doFullFloat <+> doShift (myWorkspaces !! 4) 
-   , className =? "Gimp-2.10"                   --> doFullFloat <+> doShift (myWorkspaces !! 4) 
-   --, className =? "libreoffice"                 --> doFullFloat <+> doShift (myWorkspaces !! 4) 
-   --, className =? "libreoffice"                 --> doShift (myWorkspaces !! 4) 
-   --, className =? "libreoffice-writer"          --> doShift (myWorkspaces !! 4) 
+   , className =? "Gimp"                        --> doCenterFloat <+> doShift (myWorkspaces !! 4)
+   , className =? "Gimp-3.0"                    --> doCenterFloat <+> doShift (myWorkspaces !! 4)
+   --, className =? "libreoffice"               --> doFullFloat <+> doShift (myWorkspaces !! 4) 
+   --, className =? "libreoffice"               --> doShift (myWorkspaces !! 4) 
+   --, className =? "libreoffice-writer"        --> doShift (myWorkspaces !! 4) 
    , className =? "VirtualBoxVM"                --> doShift (myWorkspaces !! 4) 
-   , className =? "Inkscape"                    --> doShift (myWorkspaces !! 4) 
+   , className =? "Inkscape"                    --> doShift (myWorkspaces !! 4)
    , className =? "whatsdesk"                   --> doShift (myWorkspaces !! 2) 
    , className =? "VirtualBox Machine"          --> doShift (myWorkspaces !! 3)
    , className =? "VirtualBox Manager"          --> doShift (myWorkspaces !! 3) 
