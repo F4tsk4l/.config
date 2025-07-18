@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 --IMPORT
 import XMonad
 import XMonad.Prelude
@@ -5,9 +6,13 @@ import XMonad.Config.Desktop
 import System.Directory
 import System.IO
 import System.Exit
+import Control.Monad
 import System.Process (readProcess)
 import Numeric (showIntAtBase, readHex)
 import qualified XMonad.StackSet as W
+import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
+import qualified Data.ByteString as BS
 
 -- Graphics
 import Graphics.X11.ExtraTypes.XF86
@@ -69,11 +74,13 @@ import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 import XMonad.Layout.NoFrillsDecoration
 
 -- Data
+import Data.Word (Word8)
+import Foreign.C.Types (CChar)
 import Data.Bits ((.|.))
 import Data.Word
 import Data.List
 import Data.Monoid
-import Data.Char (isSpace, toUpper, intToDigit)
+import Data.Char
 import Data.Maybe (isJust, fromJust)
 import Data.Tree
 import qualified Data.Map as M
@@ -196,8 +203,20 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm, xK_period), sendMessage (IncMasterN (-1)))
    ----------------------------------
     -- MY KEYBINDINGS
-    -- Reset to full opacity
+    -- Decrease window opacity
+    , ((modm .|. shiftMask, xK_j), withFocused $ \w -> do
+        op <- getWindowOpacity w
+        let newOp = max 0.1 (op - 0.1)
+        setWindowOpacity newOp w)
+
+    -- Increase window opacity
+    , ((modm .|. shiftMask, xK_k), withFocused $ \w -> do
+        op <- getWindowOpacity w
+        let newOp = min 1.0 (op + 0.1)
+        setWindowOpacity newOp w)
+
     , ((modm .|. shiftMask, xK_Down), withFocused (\w -> spawn $ "xprop -id " ++ show w ++ " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0xDAFFFFFF"))
+    -- Reset to full opacity
     , ((modm .|. shiftMask, xK_Up), withFocused (\w -> spawn $ "xprop -id " ++ show w ++ " -remove _NET_WM_WINDOW_OPACITY"))
 
     -- Quit xmonad
@@ -455,16 +474,63 @@ myStartupHook = do
    --spawnOnce "mate-session"
    --setWMName "xmonad"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
-
+--NOTE:
 setTransparentHook :: Event -> X All
-setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = id} = do
-  setOpacity id opacity
-  return (All True) where
+setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
+  let ignoreApps = ["mpv", "vlc", "feh", "librewolf"]  -- apps to ignore (class names)
+
+  dpy <- asks display
+  classHint <- io $ getClassHint dpy win
+  let cls = resClass classHint
+
+  if map toLower cls `notElem` map (map toLower) ignoreApps
+    then setOpacity win
+    else return ()
+    
+  return (All True)
+  where
     opacityFloat = 0.85
     opacity = floor $ fromIntegral (maxBound :: Word32) * opacityFloat
-    setOpacity id op = spawn $ "xprop -id " ++ show id ++ " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY " ++ show op
-setTransparentHook _ = return (All True)
+    setOpacity w = spawn $ "xprop -id " ++ show w ++
+                           " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY " ++ show opacity
 
+setTransparentHook _ = return (All True)
+--getWindowTitle :: Display -> Window -> IO String
+--getWindowTitle dpy w = do
+--  prop <- getTextProperty dpy w wM_NAME
+--  wcTextPropertyToTextList dpy prop >>= \case
+--    (x:_) -> return x
+--    []    -> return ""
+--
+--setTransparentHook :: Event -> X All
+--setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
+--  let blockTitles = ["youtube", "stream", "superabbit77", "sd0embed", "viprow",
+--                     "freesports", "1stream", "buffstreams", "watch", "facebook",
+--                     "x", "blob"]
+--
+--  dpy <- asks display
+--
+--  -- Get title and class
+--  classHint <- io $ getClassHint dpy win
+--  let cls = map toLower $ resClass classHint
+--
+--  title <- io $ getWindowTitle dpy win
+--  let titleLower = map toLower title
+--
+--  -- Check for blocked titles
+--  let blocked = any (`isInfixOf` titleLower) blockTitles
+--
+--  when (not blocked) $
+--    setOpacity win
+--
+--  return (All True)
+--  where
+--    opacityFloat = 0.85
+--    opacity = floor $ fromIntegral (maxBound :: Word32) * opacityFloat
+--    setOpacity w = spawn $ "xprop -id " ++ show w ++
+--                           " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY " ++ show opacity
+--
+--setTransparentHook _ = return (All True)
 --xPropMatches :: [XPropMatch]
 --xPropMatches = [ --([ (wM_CLASS, any ("explorer.exe"==))], (\w -> float w >> return (W.shift "2")))
 --               --, ([ (wM_COMMAND, any ("screen" ==)), (wM_CLASS, any ("xterm" ==))], pmX (addTag "screen"))
