@@ -2,19 +2,25 @@
 import XMonad
 import XMonad.Prelude
 import XMonad.Config.Desktop
---import XMonad.Config.Xfce
---import XMonad.Config.Mate
 import System.Directory
 import System.IO
 import System.Exit
+import System.Process (readProcess)
+import Numeric (showIntAtBase, readHex)
 import qualified XMonad.StackSet as W
 
--- Util
+-- Graphics
 import Graphics.X11.ExtraTypes.XF86
+import Graphics.X11.Xlib
+import Graphics.X11.Xlib.Extras
+import Foreign.C.Types (CLong)
+
+-- Util
 import XMonad.Util.Hacks (windowedFullscreenFixEventHook, javaHack, trayerAboveXmobarEventHook, trayAbovePanelEventHook, trayerPaddingXmobarEventHook, trayPaddingXmobarEventHook, trayPaddingEventHook)
 import XMonad.Util.Dmenu
 import XMonad.Util.NamedScratchpad
 import XMonad.Util.Run(spawnPipe)
+import XMonad.Util.Run(safeSpawn)
 import XMonad.Util.SpawnOnce
 import XMonad.Util.EZConfig(additionalKeys)
 import XMonad.Util.Cursor
@@ -63,11 +69,12 @@ import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 import XMonad.Layout.NoFrillsDecoration
 
 -- Data
+import Data.Bits ((.|.))
+import Data.Word
 import Data.List
 import Data.Monoid
-import Data.Char (isSpace, toUpper)
-import Data.Maybe (fromJust)
-import Data.Maybe (isJust)
+import Data.Char (isSpace, toUpper, intToDigit)
+import Data.Maybe (isJust, fromJust)
 import Data.Tree
 import qualified Data.Map as M
 
@@ -112,6 +119,12 @@ myFocusedColor :: String
 myFocusedColor = "#46d9ff"
 
 --myEventHook = fullscreenEventHook
+
+--myEventHook :: Event -> X All
+--myEventHook (MapNotifyEvent {ev_window = w}) = do
+--    setWindowOpacity 0.8 w
+--    return (All True)
+--myEventHook _ = return (All True)
 
 -- Whether focus follows the mouse pointer.
 myFocusFollowsMouse :: Bool
@@ -182,17 +195,18 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Deincrement the number of windows in the master area
     , ((modm, xK_period), sendMessage (IncMasterN (-1)))
    ----------------------------------
+    -- MY KEYBINDINGS
+    -- Reset to full opacity
+    , ((modm .|. shiftMask, xK_Down), withFocused (\w -> spawn $ "xprop -id " ++ show w ++ " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY 0xDAFFFFFF"))
+    , ((modm .|. shiftMask, xK_Up), withFocused (\w -> spawn $ "xprop -id " ++ show w ++ " -remove _NET_WM_WINDOW_OPACITY"))
+
     -- Quit xmonad
     --, ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
     , ((modm .|. shiftMask, xK_c), spawn "mate-session-save --logout-dialog")
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
-    -- MY KEYBINDINGS
     -- Jamesdsp start 
     , ((modm .|. shiftMask, xK_v), spawn "jamesdsp -t")
-    -- Jamesdsp stop 
-    --, ((modm .|. mod1Mask, xK_v), spawn "killall jamesdsp")
-    -- ((modm .|. shiftMask, xK_t), myTerminal -e kill "viper-gui")
     , ((modm, xK_n), spawnHere "nemo")
     --, ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
     , ((modm , xK_p), spawn "deadd") 
@@ -243,12 +257,34 @@ myMouseBindings (XConfig {XMonad.modMask = modm}) = M.fromList $
                                        >> windows W.shiftMaster))
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     ]
--- NOTE: Toggle full testing
+-- NOTE: 
+--Toggle full testing
 toggleFull = withFocused (\windowId -> do
     { floats <- gets (W.floating . windowset);
         if windowId `M.member` floats
         then withFocused $ windows . W.sink
         else withFocused $ windows . (flip W.float $ W.RationalRect 0 0 1 1) })  
+--NOTE:
+-- OPACITY
+-- Set window opacity (0.0 to 1.0)
+setWindowOpacity :: Rational -> Window -> X ()
+setWindowOpacity opacity w = withDisplay $ \dpy -> do
+    let prop = "_NET_WM_WINDOW_OPACITY"
+    a <- io $ internAtom dpy prop False
+    let val = round (opacity * fromIntegral (0xffffffff :: Word32)) :: CLong
+    io $ changeProperty32 dpy w a a propModeReplace [fromIntegral val]
+    io $ flush dpy
+    io $ sync dpy False
+
+-- Get current opacity, default to 1.0
+getWindowOpacity :: Window -> X Rational
+getWindowOpacity w = withDisplay $ \dpy -> do
+    a <- io $ internAtom dpy "_NET_WM_WINDOW_OPACITY" False
+    mbr <- io $ getWindowProperty32 dpy a w
+    let op = case mbr of
+                Just [val] -> fromIntegral val / fromIntegral (maxBound :: Word32)
+                _          -> 0.8
+    return op
 
  --My spacing; n sets the gap size around the windows.
 ------------------------------------------------------
@@ -420,6 +456,14 @@ myStartupHook = do
    --setWMName "xmonad"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
 
+setTransparentHook :: Event -> X All
+setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = id} = do
+  setOpacity id opacity
+  return (All True) where
+    opacityFloat = 0.85
+    opacity = floor $ fromIntegral (maxBound :: Word32) * opacityFloat
+    setOpacity id op = spawn $ "xprop -id " ++ show id ++ " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY " ++ show op
+setTransparentHook _ = return (All True)
 
 --xPropMatches :: [XPropMatch]
 --xPropMatches = [ --([ (wM_CLASS, any ("explorer.exe"==))], (\w -> float w >> return (W.shift "2")))
@@ -489,6 +533,10 @@ myManageHook = composeAll
    , isFullscreen                               --> (doFullFloat)
    --, isFullscreen                                --> (doF W.focusDown <+> doFullFloat)
    ]
+--NOTE:
+-- | ManageHook to apply default opacity on window creation
+doSetInitialOpacity :: Rational -> ManageHook
+doSetInitialOpacity op = ask >>= \w -> liftX (setWindowOpacity op w) >> idHook
 
 main :: IO ()
 main = do
@@ -508,7 +556,7 @@ main = do
      , mouseBindings      = myMouseBindings
      , layoutHook         = showWName' myShowWNameTheme $ myLayoutHook 
      --, handleEventHook    = fullscreenEventHook
-     , handleEventHook    = handleEventHook def <+> Hacks.windowedFullscreenFixEventHook<+> Hacks.trayerAboveXmobarEventHook <+> trayerPaddingXmobarEventHook
+     , handleEventHook    = handleEventHook def <+> setTransparentHook <+> Hacks.windowedFullscreenFixEventHook <+> Hacks.trayerAboveXmobarEventHook <+> trayerPaddingXmobarEventHook
      --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
      --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook mateConfig <+> namedScratchpadManageHook myScratchPads
      , manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
