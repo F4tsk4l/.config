@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# Export session type (SDDM already sets XDG vars, this is for consistency)
+export XDG_SESSION_TYPE=x11
+
+# Shared environment
+export XDG_CONFIG_HOME="$HOME/.config"
+export PATH="$HOME/.local/bin:$PATH"
+export QT_QPA_PLATFORMTHEME=qt5ct
+
+# Keyboard/mouse configs
+setxkbmap -option ctrl:nocaps &
+xsetroot -cursor_name left_ptr &
+
+# Start common services
+xhost +SI:localuser:$(whoami)
+#nm-applet &
+#dunst &
+# Add others like pasystray, blueman-applet, etc.
+
+# Load Xresources (optional)
+[ -f ~/.Xresources ] && xrdb -merge ~/.Xresources
