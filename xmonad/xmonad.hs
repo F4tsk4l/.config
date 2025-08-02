@@ -221,9 +221,11 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Quit xmonad
     --, ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
-    , ((modm .|. shiftMask, xK_c), spawn "mate-session-save --logout-dialog")
+    --, ((modm .|. shiftMask, xK_c), spawn "mate-session-save --logout-dialog")
+    , ((modm .|. shiftMask, xK_c), spawn "~/.local/bin/powermenu")
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
+    , ((modm .|. shiftMask, xK_p), spawn "~/.local/bin/powermenu")
     -- Jamesdsp start 
     , ((modm .|. shiftMask, xK_v), spawn "jamesdsp -t")
     , ((modm, xK_n), spawnHere "nemo")
@@ -457,20 +459,20 @@ myStartupHook :: X ()
 myStartupHook = do
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
    setWMName "LG3D"
-   spawnOnce "nitrogen --restore"
-   spawnOnce "start_conky_maia"
-   spawnOnce "nm-applet"
    spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
-   spawnOnce "mpd"
-   spawnOnce "volumeicon"
-   spawnOnce "qbittorrent"
-   spawnOnce "Pipewire"
-   spawnOnce "picom"
    spawnOnce "/usr/bin/deadd-notification-center"
    spawnOnce "/usr/bin/jamesdsp -t"
-   --spawnOnce "xautolock -time 30 -locker 'i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state' -detectsleep -killtime 60 -killer 'mate-session-save --logout'"
+   spawnOnce "/usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
+   --spawnOnce "mpd"
+   --spawnOnce "qbittorrent"
+   --spawnOnce "Pipewire"
+   --spawnOnce "picom"
+   --spawnOnce "nitrogen --restore"
+   --spawnOnce "start_conky_maia"
+   --spawnOnce "nm-applet"
    --spawnOnce "mate-power-manager"
-   --spawnOnce "/usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
+   --spawnOnce "volumeicon"
+   --spawnOnce "xautolock -time 30 -locker 'i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state' -detectsleep -killtime 60 -killer 'mate-session-save --logout'"
    --spawnOnce "mate-session"
    --setWMName "xmonad"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
