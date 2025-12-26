@@ -1,0 +1,2 @@
+event=button/lid LID close
+action=/etc/acpi/lock_and_suspend.sh

@@ -1,0 +1,8 @@
+//@theme "/usr/share/rofi/themes/Arc-Dark.rasi"
+configuration {
+  kb-row-up: "Up,,k";
+  kb-row-down: "Down,,j";
+  kb-cancel: "Escape,h,l";
+  kb-accept-entry: "Return,";
+}
+@theme "/usr/share/rofi/themes/Adapta-Nokto.rasi"

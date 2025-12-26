@@ -1,0 +1,53 @@
+* {
+  font: "monospace 10";
+  background:     #191724;
+  background-alt: #191724;
+  foreground:     #e0def4;
+  selected:       #191724;
+  active:         #191724;
+  urgent:         #191724;
+}
+
+window {
+  width: 600px;
+  border: 2px;
+  border-radius: 20px;
+  padding: 35px;
+  border-color: #1f1d2e;
+}
+
+mainbox {
+  border-radius: 20px;
+  spacing: 16px;
+}
+
+listview {
+  lines: 6;
+  spacing: 8px;
+}
+
+element {
+  padding: 10px;
+  border-radius: 12px;
+  background-color: transparent;
+}
+
+element selected,
+element active,
+element urgent {
+  background-color: transparent;
+}
+
+element-text {
+  text-color: #e0def4;
+  horizontal-align: 0;
+}
+
+element-text selected,
+element-text active {
+  text-color: #9ccfd8;
+}
+
+element-text urgent {
+  text-color: #ffffff;
+}

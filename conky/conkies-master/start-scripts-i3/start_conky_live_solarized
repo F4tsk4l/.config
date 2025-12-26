@@ -1,0 +1,5 @@
+#!/bin/bash
+
+conky -c /home/cr33p3r/.config/conky/conkies-master/config_i3/conky_solarized &&
+
+exit 0

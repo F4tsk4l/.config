@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Export session type (SDDM already sets XDG vars, this is for consistency)
+export XDG_SESSION_TYPE=x11
+
+# Shared environment
+export XDG_CONFIG_HOME="$HOME/.config"
+export PATH="$HOME/.local/bin:$PATH"
+export QT_QPA_PLATFORMTHEME=qt5ct
+
+# Keyboard/mouse configs
+setxkbmap -option &
+xsetroot -cursor_name left_ptr &
+
+# Start common services
+xhost +SI:localuser:$(whoami)
+# Restore default Caps Lock behavior
+#volumeicon &
+#nitrogen --restore &
+#start_conky_maia &
+#nm-applet &
+#mpd &
+#qbittorrent
+#pipewire &
+#picom &
+#mate-power-manager &
+#blueman-applet &
+#nm-applet &
+#dunst &
+# Add others like pasystray, blueman-applet, etc.
+
+# Set path to opacity helpers if needed globally
+#export PATH="$HOME/.config/awesome/scripts:$PATH"
+# Ensure xprop/xdotool-dependent helpers are ready
+#chmod +x $HOME/.config/awesome/scripts/opacity_*.sh
+
+# Load Xresources (optional)
+[ -f ~/.Xresources ] && xrdb -merge ~/.Xresources

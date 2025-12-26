@@ -1,0 +1,1 @@
+-- bar.lua content here (mocked)

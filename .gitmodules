@@ -1,0 +1,18 @@
+[submodule "awesome/bling"]
+	path = awesome/bling
+	url = https://github.com/BlingCorp/bling.git
+[submodule "mpv/scripts/autosubsync-mpv"]
+	path = mpv/scripts/autosubsync-mpv
+	url = https://github.com/joaquintorres/autosubsync-mpv.git
+[submodule "mpv/scripts/autosubsync"]
+	path = mpv/scripts/autosubsync
+	url = https://github.com/joaquintorres/autosubsync-mpv.git
+[submodule "qBittorrentDarktheme"]
+	path = qBittorrentDarktheme
+	url = https://github.com/maboroshin/qBittorrentDarktheme.git
+[submodule "qBittorrent/qBittorrentDarktheme"]
+	path = qBittorrent/qBittorrentDarktheme
+	url = https://github.com/maboroshin/qBittorrentDarktheme.git
+[submodule "yazi/flavors"]
+	path = yazi/flavors
+	url = https://github.com/yazi-rs/flavors.git

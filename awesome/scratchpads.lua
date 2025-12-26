@@ -1,0 +1,1 @@
+-- scratchpads.lua content here (mocked)

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Exec=xmonad
+Hidden=false
+Name[en_US]=XMonad
+Name=Xmonad
+Comment[en_US]=
+Comment=
+X-MATE-Autostart-Delay=0

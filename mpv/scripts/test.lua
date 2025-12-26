@@ -1,0 +1,5 @@
+local mp = require("mp")
+mp.add_key_binding("M", "mouse_pos", function()
+	local x, y = mp.get_mouse_pos()
+	mp.osd_message(string.format("Mouse: (%d, %d)", x, y), 1)
+end)
