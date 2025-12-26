@@ -16,3 +16,6 @@
 [submodule "yazi/flavors"]
 	path = yazi/flavors
 	url = https://github.com/yazi-rs/flavors.git
+[submodule "alacritty/themes/alacritty-theme"]
+	path = alacritty/themes/alacritty-theme
+	url = https://github.com/alacritty/alacritty-theme.git
