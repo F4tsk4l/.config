@@ -1,9 +1,9 @@
-sw_volume: 16
+sw_volume: 34
 audio_device_state:1:PipeWire Sound Server
 audio_device_state:1:my_fifo
 state: pause
-current: 1
-time: 117.507
+current: 2
+time: 30.732
 random: 0
 repeat: 1
 single: 1
@@ -15,4 +15,5 @@ lastloadedplaylist:
 playlist_begin
 0:Armin_van_Buuren_feat._Trevor_Guthrie_-_This_Is_What_It_Feels_Like.mp3
 1:Bruce Africa - You.mp3
+2:963 Hz Pure Tone - 10 Hours - Black Screen - Connects to Higher Self, Transcendence.opus
 playlist_end
