@@ -480,7 +480,7 @@ myStartupHook = do
 --NOTE:
 setTransparentHook :: Event -> X All
 setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
-  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe"]  -- apps to ignore (class names)
+  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "Inkscape"]  -- apps to ignore (class names)
 
   dpy <- asks display
   classHint <- io $ getClassHint dpy win
