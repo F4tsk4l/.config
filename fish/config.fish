@@ -37,7 +37,7 @@ alias cli "xsel -o --clipboard"
 alias ls "eza --icons"
 alias ll "eza -al --icons"
 alias l "eza -a --icons"
-alias cat bat
+#alias cat bat
 alias rmr "rm -rf"
 alias cls clear
 alias yayi "yay -a -S --cleanafter"
