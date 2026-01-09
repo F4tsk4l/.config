@@ -25,9 +25,9 @@ ueberzug_scale  = 1
 ueberzug_offset = [ 0, 0, 0, 0 ]
 
 [opener]
-edit = [
-	{ run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
-]
+#edit = [
+#	{ run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+#]
 open = [
 	{ run = 'xdg-open "$1"',                desc = "Open", for = "linux" },
 ]
@@ -84,7 +84,7 @@ fetchers = [
 ]
 preloaders = [
   #{ mime = "image/{avif,hei?,jxl,svg+xml}", run = "allmytoes" },
-	{ mime = "image/*", run = "allmytoes" },
+	{ mime = "image/*", run = "magick" },
   #Video
 	{ mime = "video/*", run = "allmytoes" },
 	# PDF
@@ -103,9 +103,9 @@ previewers = [
 	{ mime = "application/{json,x-ndjson}", run = "json" },
     # Media
 	# Image
-  #{ mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
+  { mime = "image/{avif,hei?,jxl,svg+xml}", run = "magick" },
 
-	{ mime = "image/*", run = "allmytoes" },
+	{ mime = "image/*", run = "magick" },
 	# Video
 	{ mime = "video/*", run = "allmytoes" },
   { mime = "application/subrip", run = "mediainfo"},
