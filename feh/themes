@@ -1,4 +1,4 @@
-feh -B Black \
+feh  \
 -d \
 -N \
 --scale-down

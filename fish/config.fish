@@ -8,6 +8,7 @@
 #set fish_tmux_autostart_once true
 #set fish_tmux_autoconnect false
 #set fish_tmux_unicode true
+set -x EDITOR nvim
 
 if status is-interactive
     if not set -q TMUX
