@@ -73,5 +73,10 @@ use = "boydaihungst/simple-tag"
 rev = "00a0d2b"
 hash = "9f3d578af620111e844bc50c5ae86728"
 
+[[plugin.deps]]
+use = "ndtoan96/ouch"
+rev = "594b8a2"
+hash = "c9e628fc0312d198db22ae2fa74883b"
+
 [flavor]
 deps = []
