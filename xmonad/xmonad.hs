@@ -465,7 +465,7 @@ myStartupHook = do
    spawnOnce "Pipewire"
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
    spawnOnce "nitrogen --restore"
-   spawnOnce "/usr/bin/jamesdsp -t"
+   spawnOnce "jamesdsp -t"
    spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
    spawnOnce "qbittorrent"
    spawnOnce "/usr/bin/deadd-notification-center"
