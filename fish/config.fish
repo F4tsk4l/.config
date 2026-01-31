@@ -41,10 +41,10 @@ alias l "eza -a --icons"
 #alias cat bat
 alias rmr "rm -rf"
 alias cls clear
-alias yayi "yay -a -S --cleanafter"
+#alias yayi "yay -a -S --cleanafter"
 alias rename perl-rename
 alias ncmp ncmpcpp
-alias yay "yay -a"
+#alias yay "yay -a"
 #alias wine "wine64"
 #alias vim "nvim"
 #bind --mode insert ii 'commandline -r ""'

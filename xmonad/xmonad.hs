@@ -560,6 +560,7 @@ myManageHook = composeAll
    , title     =? "MavisBeacon.exe - Wine Desktop"  --> doCenterFloat
    , appName   =? "Msgcompose"                  --> doCenterFloat
    , appName   =? "file_properties"             --> doCenterFloat
+   , appName   =? "Nicotine+"                   --> doCenterFloat
    , appName   =? "Calendar"                    --> doCenterFloat
    , appName   =? "Dark Reader developer tools" --> doCenterFloat
    , className =? "conky"                       --> doIgnore
