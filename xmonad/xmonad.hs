@@ -480,7 +480,7 @@ myStartupHook = do
 --NOTE:
 setTransparentHook :: Event -> X All
 setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
-  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "Inkscape"]  -- apps to ignore (class names)
+  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
 
   dpy <- asks display
   classHint <- io $ getClassHint dpy win
@@ -555,6 +555,7 @@ myManageHook = composeAll
    , appName   =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , title     =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , className =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4) 
+   , className =? "Master PDF Editor 5"         --> doShift (myWorkspaces !! 3) 
    , appName   =? "libreoffice"                 --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , appName   =? "cmst"                        --> doCenterFloat
    , title     =? "MavisBeacon.exe - Wine Desktop"  --> doCenterFloat
