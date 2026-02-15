@@ -52,9 +52,8 @@ alias ncmp ncmpcpp
 #bind --mode command ii 'commandline -r ""'
 
 #Vi Mode keybindings
-#set -g fish_key_bindings fish_vi_key_bindings
-#set -g fish_vi_key_bindings fish_vi_key_bindings
-fish_vi_key_bindings default
+set -g fish_key_bindings fish_vi_key_bindings
+#fish_vi_key_bindings default
 #set -g fish_vi_key_bindings = fish_vi_key_bindings default
 bind --mode insert --sets-mode default jk repaint
 bind --mode replace --sets-mode default jk repaint
