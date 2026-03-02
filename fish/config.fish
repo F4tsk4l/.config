@@ -23,7 +23,7 @@ end
 
 set -g PATH "$HOME/.cargo/bin:$PATH"
 set -g PATH "$HOME/.local/bin:$PATH"
-set -g PATH "$HOME/.config/awesome/scripts:$PATH"
+#set -g PATH "$HOME/.config/awesome/scripts:$PATH"
 #set -g ANDROID_SDK_PATH "/opt/android-sdk/"
 set fish_greeting ""
 

@@ -1,3 +1,5 @@
+# If you encounter any issues, please make an issue at https://github.com/yazi-rs/schemas.
+"$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 [mgr]
 ratio          = [ 0, 5, 5 ]
 sort_by        = "natural"
@@ -5,12 +7,12 @@ sort_sensitive = false
 sort_reverse 	 = false
 sort_dir_first = true
 sort_translit  = false
+sort_fallback  = "alphabetical"
 linemode       = "size_and_mtime"
 show_hidden    = false
 show_symlink   = true
 scrolloff      = 5
 mouse_events   = [ "click", "scroll" ]
-title_format   = "Yazi: {cwd}"
 
 [preview]
 wrap            = "yes"
@@ -31,10 +33,10 @@ edit = [
 	{ run = "code -w %s",       desc = "code (block)", for = "windows", block = true },
 ]
 play = [
-	{ run = "xdg-open %s1",                desc = "Play", for = "linux" },
-	{ run = "open %s",                     desc = "Play", for = "macos" },
-	{ run = 'start "" %s1', orphan = true, desc = "Play", for = "windows" },
-	{ run = "termux-open %s1",             desc = "Play", for = "android" },
+	{ run = "xdg-open %s1",    desc = "Play", for = "linux", orphan = true },
+	{ run = "open %s",         desc = "Play", for = "macos" },
+	{ run = 'start "" %s1',    desc = "Play", for = "windows", orphan = true },
+	{ run = "termux-open %s1", desc = "Play", for = "android" },
 	{ run = "mediainfo %s1; echo 'Press enter to exit'; read _", block = true, desc = "Show media info", for = "unix" },
 	{ run = "mediainfo %s1 & pause", block = true, desc = "Show media info", for = "windows" },
 ]
@@ -83,14 +85,16 @@ rules = [
 ]
 
 [tasks]
-micro_workers    = 10
-macro_workers    = 10
+file_workers     = 3
+plugin_workers   = 5
+fetch_workers    = 5
+preload_workers  = 2
+process_workers  = 5
 bizarre_retry    = 3
 image_alloc      = 536870912  # 512MB
 image_bound      = [ 10000, 10000 ]
 suppress_preload = false
 
-# NOTE:PLUGINS_HERE
 [plugin]
 fetchers = [
 	# Mimetype
@@ -98,18 +102,12 @@ fetchers = [
 	{ id = "mime", url = "local://*",  run = "mime.local", prio = "high" },
 	{ id = "mime", url = "remote://*", run = "mime.remote", prio = "high" },
 ]
-prepend_fetchers = [
-  { id = "simple-tag", url = "*", run = "simple-tag" },
-  { id = "simple-tag", url = "*/", run = "simple-tag" },
-]
-prepend_previewers = [
-    { url = "*.csv", run = "rich-preview"}, # for csv files
-    { url = "*.md", run = "rich-preview" }, # for markdown (.md) files
-    { url = "*.rst", run = "rich-preview"}, # for restructured text (.rst) files
-    { url = "*.ipynb", run = "rich-preview"}, # for jupyter notebooks (.ipynb)
-    { url = "*.json", run = "rich-preview"}, # for json (.json) files
-#    { url = "*.lang_type", run = "rich-preview"} # for particular language files eg. .py, .go., .lua, etc.
-]
+#NOTE: Added
+#prepend_fetchers = [
+#  { id = "simple-tag", url = "*", run = "simple-tag" },
+#  { id = "simple-tag", url = "*/", run = "simple-tag" },
+#]
+
 spotters = [
 	{ url = "*/", run = "folder" },
 	# Code
@@ -234,7 +232,7 @@ overwrite_offset = [ 0, 0, 50, 15 ]
 
 # quit
 quit_title  = "Quit?"
-quit_body   = "The following tasks are still running, are you sure you want to quit?"
+quit_body   = "There are unfinished tasks, quit anyway?\n(Open task manager with default key 'w')"
 quit_origin = "center"
 quit_offset = [ 0, 0, 50, 15 ]
 

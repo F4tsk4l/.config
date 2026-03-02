@@ -457,11 +457,11 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 -- MyStartup Hooks
 myStartupHook :: X ()
 myStartupHook = do
+   setWMName "LG3D"
    spawnOnce "/usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
    spawnOnce "picom"
    spawnOnce "mpd"
    spawnOnce "mate-power-manager"
-   setWMName "LG3D"
    spawnOnce "Pipewire"
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
    spawnOnce "nitrogen --restore"
@@ -480,7 +480,7 @@ myStartupHook = do
 --NOTE:
 setTransparentHook :: Event -> X All
 setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
-  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
+  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "open_tv", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
 
   dpy <- asks display
   classHint <- io $ getClassHint dpy win
