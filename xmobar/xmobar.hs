@@ -7,7 +7,7 @@ Config {
      , borderColor = "black"
      , border = TopB
      , bgColor = "black"
-     , iconRoot = "/home/g4m3r/.xmonad/xpm/"  -- default: "."
+     , iconRoot = "/home/sc0rp/.xmonad/xpm/"  -- default: "."
      , fgColor = "#F8F8F8"
      , alpha = 190
      -- position = TopP 0 40
@@ -79,9 +79,9 @@ Config {
         , Run DiskU         [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
         , Run MPD           [ "-t", "<state>: <artist> - <title> "
                               ,"-M", "35"]5
-        , Run Com           "/home/g4m3r/.local/bin/connection" [] "mycon"  5
+        , Run Com           "/home/sc0rp/.local/bin/connection" [] "mycon"  5
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
-        , Run Com           "/home/g4m3r/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
+        , Run Com           "/home/sc0rp/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
         , Run UnsafeStdinReader
        ]
     , sepChar =  "%"   -- delineator between plugin names and straight text
