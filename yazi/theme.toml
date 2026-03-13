@@ -10,11 +10,11 @@ find_position = { fg = "#f5bde6", bg = "reset", italic = true }
 marker_copied   = { fg = "#a6da95", bg = "#a6da95" }
 marker_cut      = { fg = "#ed8796", bg = "#ed8796" }
 marker_marked   = { fg = "#8bd5ca", bg = "#8bd5ca" }
-marker_selected = { fg = "#f0c6c6", bg = "#f0c6c6" }
+marker_selected = { fg = "#b7bdf8", bg = "#b7bdf8" }
 
 count_copied   = { fg = "#24273a", bg = "#a6da95" }
 count_cut      = { fg = "#24273a", bg = "#ed8796" }
-count_selected = { fg = "#24273a", bg = "#f0c6c6" }
+count_selected = { fg = "#24273a", bg = "#b7bdf8" }
 
 border_symbol = "│"
 border_style  = { fg = "#8087a2" }
@@ -26,8 +26,8 @@ active   = { fg = "#24273a", bg = "#cad3f5", bold = true }
 inactive = { fg = "#cad3f5", bg = "#494d64" }
 
 [mode]
-normal_main = { fg = "#24273a", bg = "#f0c6c6", bold = true }
-normal_alt  = { fg = "#f0c6c6", bg = "#363a4f"}
+normal_main = { fg = "#24273a", bg = "#b7bdf8", bold = true }
+normal_alt  = { fg = "#b7bdf8", bg = "#363a4f"}
 
 select_main = { fg = "#24273a", bg = "#a6da95", bold = true }
 select_alt  = { fg = "#a6da95", bg = "#363a4f"}
@@ -37,7 +37,7 @@ unset_alt   = { fg = "#f0c6c6", bg = "#363a4f"}
 
 [indicator]
 parent = { fg = "#24273a", bg = "#cad3f5" }
-current = { fg = "#24273a", bg = "#f0c6c6" }
+current = { fg = "#24273a", bg = "#b7bdf8" }
 preview = { fg = "#24273a", bg = "#cad3f5" }
 
 [status]
@@ -55,29 +55,29 @@ perm_exec  = { fg = "#a6da95" }
 perm_sep   = { fg = "#8087a2" }
 
 [input]
-border   = { fg = "#f0c6c6" }
+border   = { fg = "#b7bdf8" }
 title    = {}
 value    = {}
 selected = { reversed = true }
 
 [pick]
-border   = { fg = "#f0c6c6" }
+border   = { fg = "#b7bdf8" }
 active   = { fg = "#f5bde6" }
 inactive = {}
 
 [confirm]
-border     = { fg = "#f0c6c6" }
-title      = { fg = "#f0c6c6" }
+border     = { fg = "#b7bdf8" }
+title      = { fg = "#b7bdf8" }
 body       = {}
 list       = {}
 btn_yes    = { reversed = true }
 btn_no     = {}
 
 [cmp]
-border = { fg = "#f0c6c6" }
+border = { fg = "#b7bdf8" }
 
 [tasks]
-border  = { fg = "#f0c6c6" }
+border  = { fg = "#b7bdf8" }
 title   = {}
 hovered = { fg = "#f5bde6", bold = true }
 
@@ -126,13 +126,13 @@ rules = [
 	{ url = "*/", is = "dummy", bg = "#ed8796" },
 
 	# Fallback
-	{ url = "*/", fg = "#f0c6c6" },
+	{ url = "*/", fg = "#b7bdf8" },
 ]
 
 [spot]
-border = { fg = "#f0c6c6" }
-title  = { fg = "#f0c6c6" }
-tbl_cell = { fg = "#f0c6c6", reversed = true }
+border = { fg = "#b7bdf8" }
+title  = { fg = "#b7bdf8" }
+tbl_cell = { fg = "#b7bdf8", reversed = true }
 tbl_col = { bold = true }
 
 [icon]

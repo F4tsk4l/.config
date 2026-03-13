@@ -42,7 +42,7 @@ alias l "eza -a --icons"
 #alias cat bat
 alias rmr "rm -rf"
 alias cls clear
-#alias yayi "yay -a -S --cleanafter"
+alias rsyncp="rsync -ah --info=progress2"
 alias rename perl-rename
 alias ncmp ncmpcpp
 #alias yay "yay -a"

@@ -235,7 +235,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Fullscreen Toggle
     , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Browsers
-    , ((modm .|. shiftMask, xK_f), spawnHere "firefox")
+    , ((modm .|. shiftMask, xK_z), spawnHere "zen-browser")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
     , ((modm .|. controlMask, xK_b), spawnHere "brave --incognito")
     , ((modm .|. shiftMask, xK_l), spawnHere "librewolf")
@@ -480,7 +480,7 @@ myStartupHook = do
 --NOTE:
 setTransparentHook :: Event -> X All
 setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
-  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "open_tv", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
+  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "zen", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "open_tv", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
 
   dpy <- asks display
   classHint <- io $ getClassHint dpy win
@@ -550,7 +550,7 @@ myManageHook = composeAll
    , title     =? "Library"                     --> doCenterFloat
    , title     =? "Text search"                 --> doCenterFloat
    , title     =? "Choose an icon"              --> doCenterFloat
-   , title     =? "Navigator"                   --> doCenterFloat
+   --, title     =? "Navigator"                   --> doCenterFloat
    , resource  =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , appName   =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4)
    , title     =? "libreoffice-writer"          --> doFullFloat <+> doShift (myWorkspaces !! 4)
@@ -570,7 +570,7 @@ myManageHook = composeAll
    --, title     =? "MavisBeacon.exe *"               --> doCenterFloat
    --, className =? "Explorer.exe               --> doCenterFloat
    --, className =? "winecfg.exe"               --> doCenterFloat
-   , className =? "Navigator"                   --> doCenterFloat
+   --, className =? "Navigator"                   --> doCenterFloat
    , className =? "trayer"                      --> doIgnore
    , className =? "Xfce4-notifyd"               --> doIgnore
    , className =? "deadd-notification-center"   --> doIgnore
