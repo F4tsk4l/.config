@@ -480,7 +480,7 @@ myStartupHook = do
 --NOTE:
 setTransparentHook :: Event -> X All
 setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
-  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "zen", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "open_tv", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
+  let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "qutebrowser", "zen", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "open_tv", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
 
   dpy <- asks display
   classHint <- io $ getClassHint dpy win
@@ -583,6 +583,7 @@ myManageHook = composeAll
    , className =? "jamesdsp"                    --> doCenterFloat
    , className =? "Xdm-app"                     --> doCenterFloat
    , className =? "Uget-gtk"                    --> doCenterFloat
+   , className =? "Bitwarden"                   --> doCenterFloat
    , className =? "java-lang-Thread"            --> doCenterFloat
    , className =? "GParted"                     --> doCenterFloat
    , className =? "install4j-burp-StartBurp"    --> doCenterFloat

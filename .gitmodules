@@ -19,3 +19,6 @@
 [submodule "alacritty/themes/alacritty-theme"]
 	path = alacritty/themes/alacritty-theme
 	url = https://github.com/alacritty/alacritty-theme.git
+[submodule "/home/sc0rp/.config/qutebrowser/catppuccin"]
+	path = /home/sc0rp/.config/qutebrowser/catppuccin
+	url = https://github.com/catppuccin/qutebrowser.git

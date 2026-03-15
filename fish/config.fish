@@ -8,7 +8,7 @@
 #set fish_tmux_autostart_once true
 #set fish_tmux_autoconnect false
 #set fish_tmux_unicode true
-fish_config theme choose "Catppuccin Mocha" --color-theme=dark
+fish_config theme choose catppuccin-mocha --color-theme=dark
 set -x EDITOR nvim
 
 if status is-interactive
