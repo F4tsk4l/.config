@@ -1,0 +1,5 @@
+XF86MonBrightnessUp
+    brightnessctl set +5% --quiet && notify-send -r 9991 -h int:value:$(brightnessctl | grep -o '[0-9]*%' | tr -d '%') "Brightness"
+
+XF86MonBrightnessDown
+    brightnessctl set 5%- --quiet && notify-send -r 9991 -h int:value:$(brightnessctl | grep -o '[0-9]*%' | tr -d '%') "Brightness"

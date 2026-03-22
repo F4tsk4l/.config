@@ -221,7 +221,6 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
 
     -- Quit xmonad
     --, ((modm .|. shiftMask, xK_c), io (exitWith ExitSuccess))
-    --, ((modm .|. shiftMask, xK_c), spawn "mate-session-save --logout-dialog")
     , ((modm .|. shiftMask, xK_c), spawn "~/.local/bin/powermenu")
     -- Restart xmonad
     , ((modm, xK_q), spawn "xmonad --recompile; xmonad --restart")
@@ -232,6 +231,9 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     --, ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
     , ((modm , xK_p), spawn "deadd") 
     --, ((modm, xK_f), withFocused toggleFullFloat)
+    -- Brightness control
+    --, ((XF86MonBrightnessUp), spawn "brightnessctl set +5%")
+    --, ((XF86MonBrightnessDown), spawn "brightnessctl set -5%")
     -- Fullscreen Toggle
     , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Browsers
@@ -255,7 +257,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Morc menu
     , ((modm, xK_z), spawn "morc_menu")
     -- Pavucontrol
-    , ((modm .|. controlMask, xK_m), spawn "pavucontrol")
+    , ((modm .|. controlMask, xK_m), spawn "pwvucontrol")
    ]++
 
     [((m .|. modm, k), windows $ f i)
@@ -458,20 +460,21 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 myStartupHook :: X ()
 myStartupHook = do
    setWMName "LG3D"
-   spawnOnce "/usr/lib/mate-polkit/polkit-mate-authentication-agent-1"
    spawnOnce "picom"
+   spawnOnce "/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"
    spawnOnce "mpd"
-   spawnOnce "mate-power-manager"
+   spawnOnce "sxhkd"
+   spawnOnce "dunst"
    spawnOnce "Pipewire"
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
    spawnOnce "nitrogen --restore"
    spawnOnce "jamesdsp -t"
    spawnOnce "env GTK_USE_PORTAL=1 '/opt/xdman/xdm-app' --background"
-   spawnOnce "qbittorrent"
-   spawnOnce "/usr/bin/deadd-notification-center"
    spawnOnce "start_conky_maia"
    spawnOnce "nm-applet"
    spawnOnce "pasystray -g"
+   spawnOnce "qbittorrent"
+   --spawnOnce "mate-power-manager"
    --spawnOnce "xautolock -time 30 -locker 'i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state' -detectsleep -killtime 60 -killer 'mate-session-save --logout'"
    --spawnOnce "mate-session"
    --setWMName "xmonad"
@@ -579,7 +582,7 @@ myManageHook = composeAll
    , className =? "Browser"                     --> doCenterFloat
    , className =? "qBittorrent"                 --> doCenterFloat
    , className =? "cmst"                        --> doCenterFloat
-   , className =? "pavucontrol"                 --> doCenterFloat
+   , className =? "pwvucontrol"                 --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
    , className =? "Xdm-app"                     --> doCenterFloat
    , className =? "Uget-gtk"                    --> doCenterFloat
