@@ -1,5 +1,12 @@
 XF86MonBrightnessUp
-    brightnessctl set +5% --quiet && notify-send -r 9991 -h int:value:$(brightnessctl | grep -o '[0-9]*%' | tr -d '%') "Brightness"
+    brightnessctl set +5% --quiet && notify-send -r 9991 "Brightness" "$(brightnessctl | grep -o '[0-9]*%')"
 
 XF86MonBrightnessDown
-    brightnessctl set 5%- --quiet && notify-send -r 9991 -h int:value:$(brightnessctl | grep -o '[0-9]*%' | tr -d '%') "Brightness"
+    brightnessctl set 5%- --quiet && notify-send -r 9991 "Brightness" "$(brightnessctl | grep -o '[0-9]*%')"
+
+# Slider
+#XF86MonBrightnessUp
+#    brightnessctl set +5% --quiet && notify-send -r 9991 -h int:value:$(brightnessctl | #grep -o '[0-9]*%' | tr -d '%') "Brightness"
+#
+#XF86MonBrightnessDown
+#    brightnessctl set 5%- --quiet && notify-send -r 9991 -h int:value:$(brightnessctl | #grep -o '[0-9]*%' | tr -d '%') "Brightness"

@@ -1,6 +1,7 @@
 apfs-fuse-git
 asciiquarium-transparent-git
 beautyline
+bitwarden-bin
 brave-bin
 catppuccin-cursors-macchiato
 catppuccin-cursors-mocha

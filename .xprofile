@@ -7,14 +7,16 @@ export XDG_SESSION_TYPE=x11
 export XDG_CONFIG_HOME="$HOME/.config"
 export PATH="$HOME/.local/bin:$PATH"
 export QT_QPA_PLATFORMTHEME=qt5ct
+export LIBVA_DRIVER_NAME=i965
 
 # Keyboard/mouse configs
 setxkbmap -option &
+
+# Restore default Caps Lock behavior
 xsetroot -cursor_name left_ptr &
 
 # Start common services
 xhost +SI:localuser:$(whoami)
-# Restore default Caps Lock behavior
 #volumeicon &
 #nitrogen --restore &
 #start_conky_maia &
