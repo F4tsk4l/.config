@@ -54,7 +54,7 @@ Config {
                              , "--high"     , "#FF000D"
                              ] 10
         , Run Battery        [ "--template" , "<acstatus>"
-                             , "--Low"      , "30"        -- units: %
+                             , "--Low"      , "20"        -- units: %
                              , "--High"     , "85"        -- units: %
                              , "--low"      , "#FF000D"
                              , "--normal"   , "#F8F8F8"
@@ -71,7 +71,7 @@ Config {
         -- Run Kbd            [ ("us"  , "<fc=#FF000D>US")]
         , Run Swap           [ "--template" ,"<fc=#03AED2><fn=1>\xf0fb4</fn></fc> : <used> MB"
                              , "--Low"      , "500"        -- units: %
-                             , "--High"     , "1504"        -- units: %
+                             , "--High"     , "2048"        -- units: %
                              , "--low"      , "#F8F8F8"
                              , "--normal"   , "#F8F8F8"
                              , "--high"     , "#FF000D"

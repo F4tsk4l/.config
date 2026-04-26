@@ -237,7 +237,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     -- Fullscreen Toggle
     , ((modm, xK_f), sendMessage (MT.Toggle NBFULL) >> sendMessage ToggleStruts)
     -- Browsers
-    , ((modm .|. shiftMask, xK_z), spawnHere "zen-browser")
+    , ((modm .|. shiftMask, xK_n), spawnHere "zen-browser")
     , ((modm .|. shiftMask, xK_b), spawnHere "brave")
     , ((modm .|. controlMask, xK_b), spawnHere "brave --incognito")
     , ((modm .|. shiftMask, xK_l), spawnHere "librewolf")
