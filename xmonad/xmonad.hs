@@ -583,6 +583,7 @@ myManageHook = composeAll
    , className =? "qBittorrent"                 --> doCenterFloat
    , className =? "cmst"                        --> doCenterFloat
    , className =? "pwvucontrol"                 --> doCenterFloat
+   , className =? "heimdall-frontend"           --> doCenterFloat
    , className =? "jamesdsp"                    --> doCenterFloat
    , className =? "Xdm-app"                     --> doCenterFloat
    , className =? "Uget-gtk"                    --> doCenterFloat
