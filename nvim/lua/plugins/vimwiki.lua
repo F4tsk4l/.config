@@ -3,13 +3,13 @@ return {
   init = function()
     vim.g.vimwiki_list = {
       {
-        path = "/home/g4m3r/vimwiki/",
+        path = "/home/sc0rp/Documents/vimwiki/",
         syntax = "default",
         -- ext = ".md",
         ext = ".wiki",
       },
       {
-        path = "/home/g4m3r/Desktop/Mu5tur4d/N0t35/vimwiki/",
+        path = "/home/sc0rp/Documents/vimwiki/",
         syntax = "default",
         --ext = ".md",
         ext = ".wiki",
