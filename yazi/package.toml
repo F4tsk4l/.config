@@ -5,7 +5,7 @@ hash = "e02a788e5b8ae0fb47fd0193dda589cc"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:jump-to-char"
-rev = "c2c16c8"
+rev = "598cdb6"
 hash = "7a4b4237223aaa94e589d1c01a23542a"
 
 [[plugin.deps]]
@@ -25,13 +25,13 @@ hash = "4761fffb60a12d37096c34a356380cdf"
 
 [[plugin.deps]]
 use = "boydaihungst/mediainfo"
-rev = "4f80288"
-hash = "ae6421df5eb7571bd77ebdbf0a699e93"
+rev = "a6d30a1"
+hash = "f3970de915c038d09fecf8d93d156fba"
 
 [[plugin.deps]]
 use = "MasouShizuka/projects"
-rev = "198c2ba"
-hash = "5eeb4f0919ce6be5d941a9290c131d7d"
+rev = "112a270"
+hash = "5a4e61f8cae42be53844acaa6c447d96"
 
 [[plugin.deps]]
 use = "pirafrank/what-size"
@@ -45,7 +45,7 @@ hash = "e4d7c06510b4fe5f64ae31fbb4e017d6"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "c2c16c8"
+rev = "598cdb6"
 hash = "7b625412411be411153886894d9acaf"
 
 [[plugin.deps]]
@@ -65,7 +65,7 @@ hash = "d390cd2d8b996939a695411b446f58d0"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:toggle-pane"
-rev = "c2c16c8"
+rev = "598cdb6"
 hash = "9c7987da2d2a2120dac33abb64132004"
 
 [[plugin.deps]]
