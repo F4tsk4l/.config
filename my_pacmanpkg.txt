@@ -93,7 +93,7 @@ inetutils
 inkscape
 inxi
 iw
-jamesdsp
+jamesdsp-pipewire-bin
 jdk21-openjdk
 jq
 kitty
@@ -118,6 +118,7 @@ lvm2-runit
 lxappearance
 macchanger
 maim
+man-db
 masterpdfeditor
 mc
 memtest86+
@@ -243,6 +244,7 @@ xclip
 xdman-beta-bin
 xdotool
 xf86-video-vesa
+xidlehook
 xmobar
 xmonad
 xmonad-contrib

@@ -11,7 +11,7 @@ epson-inkjet-printer-escpr
 google-earth-pro
 gtkmm
 i3lock-color
-jamesdsp
+jamesdsp-pipewire-bin
 libideviceactivation-git
 libimobiledevice-git
 libimobiledevice-glue-git
@@ -27,5 +27,6 @@ transmission3-cli
 trayer
 ventoy-bin
 xdman-beta-bin
+xidlehook
 yay-bin
 zen-browser-bin

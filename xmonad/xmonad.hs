@@ -465,7 +465,7 @@ myStartupHook = do
    spawnOnce "mpd"
    spawnOnce "sxhkd"
    spawnOnce "dunst"
-   spawnOnce "Pipewire"
+   --spawnOnce "Pipewire"
    spawnOnce "trayer --edge top --distance 0 --align right --widthtype request --iconspacing 2 --SetDockType true --padding 2 --expand True --monitor 1 --transparent true --alpha 100 --tint 0xff000000 --height 17"
    spawnOnce "nitrogen --restore"
    spawnOnce "jamesdsp -t"
@@ -474,13 +474,16 @@ myStartupHook = do
    spawnOnce "nm-applet"
    spawnOnce "pasystray -g"
    spawnOnce "qbittorrent"
+   spawnOnce "idlehook"
+
    --spawnOnce "mate-power-manager"
    --spawnOnce "xautolock -time 30 -locker 'i3lock --radius 100 -eki ~/Saver/shaded_landscape.png -F --ring-width 3  --time-str='%H:%M' && echo mem > /sys/power/state' -detectsleep -killtime 60 -killer 'mate-session-save --logout'"
    --spawnOnce "mate-session"
    --setWMName "xmonad"
    --setWMName "LG3D"
    --spawnOnce "exec xhost +SI:localuser:$USER &"
---NOTE:
+   --
+--NOTE: TRASPARENCY
 setTransparentHook :: Event -> X All
 setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win} = do
   let ignoreApps = ["mpv", "vlc", "feh", "librewolf", "qutebrowser", "zen", "Gimp", "Brave-browser", "Zathura", "Ferdium", "pdfeditor.exe", "pdflauncher.exe",  "libreoffice", "libreoffice-writer", "libreoffice-startcenter", "winecfg.exe", "open_tv", "Inkscape", "Master PDF Editor 5"]  -- apps to ignore (class names)
@@ -495,12 +498,13 @@ setTransparentHook ConfigureEvent{ev_event_type = createNotify, ev_window = win}
     
   return (All True)
   where
-    opacityFloat = 0.85
+    opacityFloat = 1
     opacity = floor $ fromIntegral (maxBound :: Word32) * opacityFloat
     setOpacity w = spawn $ "xprop -id " ++ show w ++
                            " -f _NET_WM_WINDOW_OPACITY 32c -set _NET_WM_WINDOW_OPACITY " ++ show opacity
 
 setTransparentHook _ = return (All True)
+
 --getWindowTitle :: Display -> Window -> IO String
 --getWindowTitle dpy w = do
 --  prop <- getTextProperty dpy w wM_NAME
@@ -633,7 +637,7 @@ main = do
      , mouseBindings      = myMouseBindings
      , layoutHook         = showWName' myShowWNameTheme $ myLayoutHook 
      --, handleEventHook    = fullscreenEventHook
-     , handleEventHook    = handleEventHook def <+> setTransparentHook <+> Hacks.windowedFullscreenFixEventHook <+> Hacks.trayerAboveXmobarEventHook <+> trayerPaddingXmobarEventHook
+     , handleEventHook    = handleEventHook def <+> Hacks.windowedFullscreenFixEventHook <+> Hacks.trayerAboveXmobarEventHook <+> trayerPaddingXmobarEventHook
      --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
      --, manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> manageHook mateConfig <+> namedScratchpadManageHook myScratchPads
      , manageHook         = myManageHook <+> manageDocks <+> manageSpawn <+> namedScratchpadManageHook myScratchPads
