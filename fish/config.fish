@@ -42,9 +42,11 @@ alias l "eza -a --icons"
 #alias cat bat
 alias rmr "rm -rf"
 alias cls clear
-alias rsyncp="rsync -ah --info=progress2"
+alias rsyncp "rsync -ah --info=progress2"
 alias rename perl-rename
 alias ncmp ncmpcpp
+alias screenshot_folders "mkdir -p $HOME/Pictures/Maimshts/Full/ && mkdir -p $HOME/Pictures/Maimshts/ActiveW/ && mkdir -p $HOME/Pictures/Maimshts/Selection/"
+
 #alias yay "yay -a"
 #alias wine "wine64"
 #alias vim "nvim"
