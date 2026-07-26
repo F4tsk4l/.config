@@ -15,26 +15,21 @@ setxkbmap -option &
 # Restore default Caps Lock behavior
 xsetroot -cursor_name left_ptr &
 
-# NOTE: IDLE_Hook
+# NOTE: IDLEHook
 pkill xidlehook 2>/dev/null
-xidlehook \
-  --not-when-fullscreen \
-  --not-when-audio \
-  --timer 600 \
-  i3lock --radius 100 \
-  -eki $HOME_DIR/Saver/shaded_landscape.png \
-  -F --ring-width 3 --time-str='%H:%M' -p default &
+xidlehook --not-when-fullscreen --not-when-audio --timer 600 "i3lock --radius 100 -eki /home/sc0rp/Saver/shaded_landscape.png -F --ring-width 3 --time-str='%H:%M' -p default" "" &
 
 # Start common services
 xhost +SI:localuser:$(whoami)
 usbmuxd &
+Pipewire &
+
 #volumeicon &
 #nitrogen --restore &
 #start_conky_maia &
 #nm-applet &
 #mpd &
 #qbittorrent
-#pipewire &
 #picom &
 #mate-power-manager &
 #blueman-applet &

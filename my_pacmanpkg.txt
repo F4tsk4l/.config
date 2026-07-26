@@ -60,6 +60,7 @@ eza
 fastfetch
 fd
 feh
+ferdium-bin
 ffmpegthumbnailer
 fish
 flameshot
@@ -76,6 +77,7 @@ gnome-characters
 gnome-themes-extra
 gnu-netcat
 go
+gocryptfs
 google-earth-pro
 gptfdisk
 grub
@@ -151,6 +153,7 @@ nsxiv
 ntfs-3g
 ntp
 ntp-runit
+onlyoffice-bin
 open-tv-bin
 openssh-runit
 openvpn
@@ -166,7 +169,6 @@ perl-cpan-meta-check
 perl-image-exiftool
 perl-module-install
 perl-rename
-phoneboard
 picom
 pipewire
 pipewire-jack
@@ -201,6 +203,7 @@ sxhkd
 syncthing
 syncthing-relaysrv-runit
 syncthing-runit
+sysbench
 system-config-printer
 tesseract-data-eng
 texlive-binextra
@@ -211,6 +214,7 @@ texlive-latexrecommended
 texlive-meta
 thermald
 thermald-runit
+times-newer-roman
 timidity++
 tipp10
 tldr

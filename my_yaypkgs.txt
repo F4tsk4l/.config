@@ -7,7 +7,9 @@ catppuccin-cursors-macchiato
 catppuccin-cursors-mocha
 catppuccin-gtk-theme-macchiato
 catppuccin-gtk-theme-mocha
+electron37
 epson-inkjet-printer-escpr
+ferdium-bin
 google-earth-pro
 gtkmm
 i3lock-color
@@ -21,8 +23,9 @@ libtatsu-git
 libusbmuxd-git
 masterpdfeditor
 nitrogen
+onlyoffice-bin
 open-tv-bin
-phoneboard
+times-newer-roman
 transmission3-cli
 trayer
 ventoy-bin

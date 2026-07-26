@@ -77,8 +77,8 @@ Config {
                              , "--high"     , "#FF000D"
                              ] 10
         , Run DiskU         [("/", "<fc=#FFF455><fn=1>\xf02ca</fn></fc> : <free>")] [] 60
-        , Run MPD           [ "-t", "<state>: <artist> - <title> "
-                              ,"-M", "35"]5
+        --, Run MPD           [ "-t", "<state>: <artist> - <title> "
+        --                      ,"-M", "35"]5
         , Run Com           "/home/sc0rp/.local/bin/connection" [] "mycon"  5
            -- Script that dynamically adjusts xmobar padding depending on number of trayer icons.
         , Run Com           "/home/sc0rp/.config/xmobar/trayer-padding.sh" [] "trayerpad" 5 
@@ -86,5 +86,6 @@ Config {
        ]
     , sepChar =  "%"   -- delineator between plugin names and straight text
     , alignSep = "}{"  -- separator between left-right alignment
-    , template = "%UnsafeStdinReader% }{<box type=Bottom width=2 mb=1 color=#E7D4B5>%mpd%</box>   <box type=Bottom width=2 mb=1 color=#E7D4B5>%date%</box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %swap% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %memory% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> <fc=#FF8080>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5>  %battery% </box> %trayerpad%"
+    --, template = "%UnsafeStdinReader% }{<box type=Bottom width=2 mb=1 color=#E7D4B5>%mpd%</box>   <box type=Bottom width=2 mb=1 color=#E7D4B5>%date%</box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %swap% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %memory% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> <fc=#FF8080>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5>  %battery% </box> %trayerpad%"
+    , template = "%UnsafeStdinReader% }{<box type=Bottom width=2 mb=1 color=#E7D4B5>%date%</box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %disku% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %multicpu% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %coretemp% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %swap% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> %memory% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5> <fc=#FF8080>%mycon%</fc>%dynnetwork% </box>  <box type=Bottom width=2 mb=1 color=#E7D4B5>  %battery% </box> %trayerpad%"
 }

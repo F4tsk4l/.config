@@ -229,7 +229,7 @@ myKeys conf@(XConfig {XMonad.modMask = modm}) = M.fromList $
     , ((modm .|. shiftMask, xK_v), spawn "jamesdsp -t")
     , ((modm, xK_n), spawnHere "nemo")
     --, ((modm .|. controlMask, xK_b), sendMessage ToggleStruts)
-    , ((modm , xK_p), spawn "deadd") 
+   -- , ((modm , xK_p), spawn "deadd") 
     --, ((modm, xK_f), withFocused toggleFullFloat)
     -- Brightness control
     --, ((XF86MonBrightnessUp), spawn "brightnessctl set +5%")
@@ -571,6 +571,7 @@ myManageHook = composeAll
    , appName   =? "Nicotine+"                   --> doCenterFloat
    , appName   =? "Calendar"                    --> doCenterFloat
    , appName   =? "Dark Reader developer tools" --> doCenterFloat
+   , className   =? "DesktopEditors"              --> doCenterFloat
    , className =? "conky"                       --> doIgnore
    -- TODO:Add MavisBeacon to doCenterFloat
    --, title     =? "MavisBeacon.exe - Wine desktop"  --> doCenterFloat
