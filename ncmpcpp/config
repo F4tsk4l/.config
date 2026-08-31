@@ -1,6 +1,6 @@
 #ncmpcpp config
 #% egrep -v '^#' ~/.config/ncmpcpp/config
-mpd_music_dir = "/home/g4m3r/Desktop/10c/10c/Music"
+mpd_music_dir = "/home/sc0rp/Desktop/10c/10c/Music"
 visualizer_in_stereo = "yes"
 visualizer_data_source = "/tmp/mpd.fifo"
 visualizer_output_name = "my_fifo"

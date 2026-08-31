@@ -39,6 +39,7 @@ alias cli "xsel -o --clipboard"
 alias ls "eza --icons"
 alias ll "eza -al --icons"
 alias l "eza -a --icons"
+alias snvim "sudo -E nvim"
 #alias cat bat
 alias rmr "rm -rf"
 alias cls clear
@@ -67,9 +68,9 @@ set -g fish_sequence_key_delay_ms 500
 
 #Set whoami variable
 #set me "$(whoami)"
-alias notes "nvim /home/g4m3r/Desktop/Mu5tur4d/N0t35/notes.md"
-alias parts "nvim /home/g4m3r/Desktop/Mu5tur4d/N0t35/parts.md"
-alias ltxn "nvim /home/g4m3r/Desktop/Mu5tur4d/N0t35/LaTex.md"
+alias notes "nvim /home/sc0rp/Desktop/Mu5tur4d/N0t35/notes.md"
+alias parts "nvim /home/sc0rp/Desktop/Mu5tur4d/N0t35/parts.md"
+alias ltxn "nvim /home/sc0rp/Desktop/Mu5tur4d/N0t35/LaTex.md"
 #alias cdld "cd /run/media/"$me"/Local\ Disk/"
 
 export VISUAL=nvim

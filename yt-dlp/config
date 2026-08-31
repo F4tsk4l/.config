@@ -34,7 +34,7 @@
 # Number of fragments of a dash/hlsnative video that should be download concurrently (default is 1)
 #--concurrent-fragments 4
 # Save all videos here
-#--batch-file /home/g4m3r/Desktop/Ytd/ytd.txt
+#--batch-file /home/sc0rp/Desktop/Ytd/ytd.txt
 #Write video description to a .description file
 #--write-description 
 # Write video metadata to a .info.json file

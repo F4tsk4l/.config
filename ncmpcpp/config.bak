@@ -5,7 +5,7 @@ mpd_port = "6601"
 #mpd_password = ""
 #mpd_connection_timeout = 5
 ## Needed for tag editor and file operations to work.
-mpd_music_dir = "/home/g4m3r/10c/Music/"
+mpd_music_dir = "/home/sc0rp/10c/Music/"
 #mpd_crossfade_time = 5
 
 ##### music visualizer #####
